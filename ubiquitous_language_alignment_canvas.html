@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ubiquitous Language Alignment Canvas</title>
+  <style>
+    :root{
+      --page-bg:#ffffff;
+      --panel-bg:#ffffff;
+      --border:#1f1f1f;
+      --border-thin:#2b2b2b;
+      --header-bg:#e6e6e6;
+      --note-bg:#fff2a8;
+      --note-border:#d3c26a;
+      --text:#111111;
+      --muted:#555555;
+      --radius:0px;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--page-bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 16px 40px;
+    }
+
+    header{
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      padding-bottom:10px;
+      border-bottom:3px solid var(--border);
+      margin-bottom:14px;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:2px solid var(--border);
+      background:var(--page-bg);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:0;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      box-shadow:none;
+    }
+    button:hover{ background:#f6f6f6; }
+
+    .card{
+      margin-top:16px;
+      background:var(--panel-bg);
+      border:2px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:none;
+      overflow:hidden;
+    }
+
+    .hd{
+      padding:12px 14px;
+      border-bottom:2px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:var(--header-bg);
+    }
+
+    .hd .t{
+      font-weight:900;
+      font-size:14px;
+      color:var(--text);
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+
+    .bd{
+      padding:12px 14px;
+      background:#ffffff;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:8px;
+      line-height:1.35;
+    }
+
+    input, textarea, select{
+      width:100%;
+      box-sizing:border-box;
+      border:2px solid var(--border-thin);
+      background:#ffffff;
+      color:var(--text);
+      border-radius:0;
+      padding:10px 10px;
+      font-size:13px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:84px;
+      resize:vertical;
+      line-height:1.35;
+    }
+
+    /* Sticky-note label */
+    .tag{
+      font-size:12px;
+      font-weight:900;
+      color:#222;
+      border:2px solid var(--note-border);
+      padding:6px 10px;
+      border-radius:0;
+      background:var(--note-bg);
+      white-space:nowrap;
+      text-transform:lowercase;
+    }
+
+    /* Tables */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border:2px solid var(--border);
+      border-radius:0;
+      overflow:hidden;
+    }
+    th,td{
+      border-right:2px solid var(--border);
+      border-bottom:2px solid var(--border);
+      padding:10px;
+      vertical-align:top;
+    }
+    th:last-child, td:last-child{ border-right:0; }
+    tr:last-child td{ border-bottom:0; }
+
+    th{
+      font-size:12px;
+      text-align:left;
+      color:var(--text);
+      background:var(--header-bg);
+      text-transform:uppercase;
+      letter-spacing:.3px;
+      font-weight:900;
+    }
+    td{ background:#ffffff; }
+
+    @media (max-width:980px){
+      table,thead,tbody,tr,th,td{display:block}
+      tr{margin-bottom:12px}
+      th{position:sticky; top:0}
+    }
+
+    @media print{
+      header .toolbar{ display:none; }
+      .page{ padding:0; }
+      button{ display:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Ubiquitous Language Alignment Canvas</h1>
+        <div class="meta">Create a shared glossary across Domain, ML, and OT/IT — with semantics and stability.</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="clearAll()">Clear</button>
+        <button onclick="addRow()">Add Term Row</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="hd"><div class="t">Context + Scope</div></div>
+      <div class="bd">
+        <div class="hint">Which bounded context does this glossary belong to?</div>
+        <input id="ctx" placeholder="e.g., Surface Quality Inspection" />
+        <div class="hint">What problem does this glossary prevent? (misunderstandings, wrong units, label confusion, etc.)</div>
+        <textarea id="why" placeholder="Describe the collaboration pain you’re addressing."></textarea>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><div class="t">Key Terms (Tri-lingual)</div></div>
+      <div class="bd">
+        <div class="hint">
+          For each term, capture: <b>Domain meaning</b> (expert language), <b>ML interpretation</b> (labels/features/proxies),
+          and <b>Technical representation</b> (signals/fields/units). Add risks and stability.
+        </div>
+
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th class="term">Term</th>
+              <th class="col">Domain meaning</th>
+              <th class="col">ML interpretation / proxy</th>
+              <th class="col">Technical representation (fields, units)</th>
+              <th class="risk">Ambiguities / risks</th>
+              <th class="stable">Stability</th>
+            </tr>
+          </thead>
+          <tbody id="body"></tbody>
+        </table>
+
+        <div class="addRow hint">
+          Tip: Use Stability values like <b>Stable</b>, <b>Evolving</b>, <b>Volatile</b>. Volatile terms deserve contracts + tests.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const body = document.getElementById("body");
+
+    function rowTemplate() {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input placeholder="e.g., defect severity"></td>
+        <td><textarea placeholder="What it means to domain experts"></textarea></td>
+        <td><textarea placeholder="Label definition, proxy, or feature mapping"></textarea></td>
+        <td><textarea placeholder="Signals/fields, units, reference frame, time meaning"></textarea></td>
+        <td><textarea placeholder="Confusions, edge cases, semantic drift risks"></textarea></td>
+        <td>
+          <input placeholder="Stable / Evolving / Volatile">
+          <div style="height:8px"></div>
+          <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:12px;padding:8px 10px;font-weight:800;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+        </td>
+      `;
+      return tr;
+    }
+
+    function addRow() { body.appendChild(rowTemplate()); }
+    function clearAll() {
+      document.getElementById("ctx").value = "";
+      document.getElementById("why").value = "";
+      body.innerHTML = "";
+      for (let i=0;i<6;i++) addRow();
+    }
+
+    // init with 6 rows
+    for (let i=0;i<6;i++) addRow();
+  </script>
+</body>
+</html>

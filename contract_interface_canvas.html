@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contract & Interface Canvas</title>
+  <style>
+    :root{
+      --page-bg:#ffffff;
+      --panel-bg:#ffffff;
+      --border:#1f1f1f;
+      --border-thin:#2b2b2b;
+      --header-bg:#e6e6e6;
+      --note-bg:#fff2a8;
+      --note-border:#d3c26a;
+      --text:#111111;
+      --muted:#555555;
+      --radius:0px;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--page-bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    .page{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 16px 40px;
+    }
+
+    header{
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      padding-bottom:10px;
+      border-bottom:3px solid var(--border);
+      margin-bottom:14px;
+    }
+
+    h1{
+      margin:0;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+
+    .meta{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:2px solid var(--border);
+      background:var(--page-bg);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:0;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      box-shadow:none;
+    }
+    button:hover{ background:#f6f6f6; }
+
+    .card{
+      margin-top:16px;
+      background:var(--panel-bg);
+      border:2px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:none;
+      overflow:hidden;
+    }
+
+    .hd{
+      padding:12px 14px;
+      border-bottom:2px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background:var(--header-bg);
+    }
+
+    .hd .t{
+      font-weight:900;
+      font-size:14px;
+      color:var(--text);
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+
+    .bd{
+      padding:12px 14px;
+      background:#ffffff;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:8px;
+      line-height:1.35;
+    }
+
+    input, textarea, select{
+      width:100%;
+      box-sizing:border-box;
+      border:2px solid var(--border-thin);
+      background:#ffffff;
+      color:var(--text);
+      border-radius:0;
+      padding:10px 10px;
+      font-size:13px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:84px;
+      resize:vertical;
+      line-height:1.35;
+    }
+
+    /* Sticky-note label */
+    .tag{
+      font-size:12px;
+      font-weight:900;
+      color:#222;
+      border:2px solid var(--note-border);
+      padding:6px 10px;
+      border-radius:0;
+      background:var(--note-bg);
+      white-space:nowrap;
+      text-transform:lowercase;
+    }
+
+    /* Tables */
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border:2px solid var(--border);
+      border-radius:0;
+      overflow:hidden;
+    }
+    th,td{
+      border-right:2px solid var(--border);
+      border-bottom:2px solid var(--border);
+      padding:10px;
+      vertical-align:top;
+    }
+    th:last-child, td:last-child{ border-right:0; }
+    tr:last-child td{ border-bottom:0; }
+
+    th{
+      font-size:12px;
+      text-align:left;
+      color:var(--text);
+      background:var(--header-bg);
+      text-transform:uppercase;
+      letter-spacing:.3px;
+      font-weight:900;
+    }
+    td{ background:#ffffff; }
+
+    @media (max-width:980px){
+      table,thead,tbody,tr,th,td{display:block}
+      tr{margin-bottom:12px}
+      th{position:sticky; top:0}
+    }
+
+    @media print{
+      header .toolbar{ display:none; }
+      .page{ padding:0; }
+      button{ display:none; }
+    }
+  </style>
+
+  <style>
+    .grid{
+      margin-top:16px; display:grid; gap:14px;
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        "id id"
+        "sem sem"
+        "quality fail"
+        "version notes";
+    }
+    .id{grid-area:id}
+    .sem{grid-area:sem}
+    .quality{grid-area:quality}
+    .fail{grid-area:fail}
+    .version{grid-area:version}
+    .notes{grid-area:notes}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr; grid-template-areas:
+        "id" "sem" "quality" "fail" "version" "notes";
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Contract & Interface Canvas</h1>
+        <div class="meta">Define contracts between Domain ↔ AI ↔ OT/IT with semantics, quality, failure, and versioning.</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="document.querySelectorAll('textarea,input').forEach(e=>e.value='')">Clear</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card id">
+        <div class="hd"><div class="t">Interface Identity</div><span class="tag">Producer → Consumer</span></div>
+        <div class="bd">
+          <div class="row three">
+            <div>
+              <div class="hint">Producer (system/team/context)</div>
+              <input placeholder="e.g., Vision Edge Node" />
+            </div>
+            <div>
+              <div class="hint">Consumer (system/team/context)</div>
+              <input placeholder="e.g., Quality Management System" />
+            </div>
+            <div>
+              <div class="hint">Contract type</div>
+              <select>
+                <option>Event</option>
+                <option>API (sync)</option>
+                <option>Stream</option>
+                <option>Batch</option>
+                <option>File drop</option>
+              </select>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="row two">
+            <div>
+              <div class="hint">Interface name</div>
+              <input placeholder="e.g., DefectDetected v1" />
+            </div>
+            <div>
+              <div class="hint">Direction</div>
+              <input placeholder="e.g., Edge → MES" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card sem">
+        <div class="hd"><div class="t">Semantic Contract</div><span class="tag">Meaning-first</span></div>
+        <div class="bd row">
+          <div class="hint">Domain meaning: what does the message/API *mean* in business terms?</div>
+          <textarea placeholder="Describe the intent and domain semantics."></textarea>
+
+          <div class="hint">Field semantics: units, reference frames, time meaning, taxonomy versions.</div>
+          <textarea placeholder="List critical fields and their meanings (including units + coordinate frames)."></textarea>
+
+          <div class="hint">Domain invariants: rules that must always hold.</div>
+          <textarea placeholder="E.g., position reference must match calibration version; severity scale must match policy version."></textarea>
+        </div>
+      </section>
+
+      <section class="card quality">
+        <div class="hd"><div class="t">Quality & Operational Guarantees</div><span class="tag">SLO-ish</span></div>
+        <div class="bd row">
+          <div class="hint">Freshness / latency / completeness / ordering expectations.</div>
+          <textarea placeholder="Define what 'good enough' means operationally."></textarea>
+
+          <div class="hint">Validation: how the consumer detects contract violations.</div>
+          <textarea placeholder="Schema checks, semantic checks, golden samples, canaries."></textarea>
+        </div>
+      </section>
+
+      <section class="card fail">
+        <div class="hd"><div class="t">Failure Semantics</div><span class="tag">Safe degradation</span></div>
+        <div class="bd row">
+          <div class="hint">How can this interface fail? (missing data, stale data, wrong meaning, partial delivery)</div>
+          <textarea placeholder="Enumerate failure modes."></textarea>
+
+          <div class="hint">Fallback behavior: what happens when it fails?</div>
+          <textarea placeholder="Retries, safe mode, human review, ignore, default decision, rollback."></textarea>
+
+          <div class="hint">Alerting: who is notified and when?</div>
+          <textarea placeholder="Ops on-call, domain owner, ML owner; thresholds and escalation."></textarea>
+        </div>
+      </section>
+
+      <section class="card version">
+        <div class="hd"><div class="t">Versioning & Change Rules</div><span class="tag">Evolution</span></div>
+        <div class="bd row">
+          <div class="hint">Versioning scheme and compatibility rules.</div>
+          <textarea placeholder="E.g., semantic versioning; deprecation windows; consumer-driven contracts."></textarea>
+
+          <div class="hint">Change triggers: what domain/tech changes require updating this contract?</div>
+          <textarea placeholder="New taxonomy, new sensor, new policy, new upstream context." ></textarea>
+        </div>
+      </section>
+
+      <section class="card notes">
+        <div class="hd"><div class="t">Notes & Decisions</div><span class="tag">Traceability</span></div>
+        <div class="bd row">
+          <div class="hint">Key decisions made, trade-offs, open questions.</div>
+          <textarea placeholder="Capture rationale and unresolved items."></textarea>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
