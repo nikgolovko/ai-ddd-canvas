@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ubiquitous Language Alignment Canvas</title>
+  <style>
+    :root{
+      --page-bg:#ffffff;
+      --panel-bg:#ffffff;
+      --border:#1f1f1f;
+      --border-thin:#2b2b2b;
+      --header-bg:#e6e6e6;
+      --note-bg:#fff2a8;
+      --note-border:#d3c26a;
+      --text:#111111;
+      --muted:#555555;
+      --radius:0px;
+    }
+
+    html,body{height:100%;margin:0;background:var(--page-bg);color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    .page{max-width:1200px;margin:0 auto;padding:18px 16px 40px;}
+    header{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;
+      padding-bottom:10px;border-bottom:3px solid var(--border);margin-bottom:14px;}
+    h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.2px;}
+    .meta{color:var(--muted);font-size:12px;margin-top:4px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;}
+    button{border:2px solid var(--border);background:var(--page-bg);color:var(--text);
+      padding:10px 12px;border-radius:0;cursor:pointer;font-weight:800;font-size:12px;box-shadow:none;}
+    button:hover{background:#f6f6f6;}
+    .card{background:var(--panel-bg);border:2px solid var(--border);border-radius:var(--radius);box-shadow:none;overflow:hidden;}
+    .card .hd,.hd{padding:12px 14px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--header-bg);}
+    .card .hd .t,.hd .t{font-weight:900;font-size:14px;color:var(--text);text-transform:uppercase;letter-spacing:.3px;}
+    .card .bd,.bd{padding:12px 14px;background:#ffffff;}
+    .hint{color:var(--muted);font-size:12px;margin-bottom:8px;line-height:1.35;}
+    input,textarea,select{width:100%;box-sizing:border-box;border:2px solid var(--border-thin);background:#ffffff;color:var(--text);
+      border-radius:0;padding:10px 10px;font-size:13px;outline:none;}
+    textarea{min-height:110px;resize:vertical;line-height:1.35;}
+    .row{display:grid;gap:10px;}
+    .row.two{grid-template-columns:1fr 1fr;}
+    .row.three{grid-template-columns:1fr 1fr 1fr;}
+    .tag{font-size:12px;font-weight:900;color:#222;border:2px solid var(--note-border);padding:6px 10px;border-radius:0;
+      background:var(--note-bg);white-space:nowrap;text-transform:lowercase;}
+    table{width:100%;border-collapse:separate;border-spacing:0;border:2px solid var(--border);border-radius:0;overflow:hidden;}
+    th,td{border-right:2px solid var(--border);border-bottom:2px solid var(--border);padding:10px;vertical-align:top;}
+    th:last-child,td:last-child{border-right:0;}
+    tr:last-child td{border-bottom:0;}
+    th{font-size:12px;text-align:left;color:var(--text);background:var(--header-bg);text-transform:uppercase;letter-spacing:.3px;font-weight:900;}
+    td{background:#ffffff;}
+    @media (max-width:980px){.row.two,.row.three{grid-template-columns:1fr;}}
+    @media print{header .toolbar{display:none;}.page{padding:0;}button{display:none;}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>Ubiquitous Language Alignment Canvas</h1>
+        <div class="meta">Create a shared glossary across Domain, ML, and OT/IT — with semantics and stability.</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="clearAll()">Clear</button>
+        <button onclick="addRow()">Add Term Row</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="hd"><div class="t">Context + Scope</div></div>
+      <div class="bd">
+        <div class="hint">Which bounded context does this glossary belong to?</div>
+        <input id="ctx" placeholder="e.g., Surface Quality Inspection" / value="Surface Defect Inspection System (all contexts)">
+        <div class="hint">What problem does this glossary prevent? (misunderstandings, wrong units, label confusion, etc.)</div>
+        <textarea id="why" placeholder="Describe the collaboration pain you’re addressing.">Align domain, ML, and OT/IT meaning for key terms so contracts stay stable when cameras, PLC tags, models, or policies change. Prevent silent failures from unit/time/coordinate mismatches and taxonomy drift.</textarea>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="hd"><div class="t">Key Terms (Tri-lingual)</div></div>
+      <div class="bd">
+        <div class="hint">
+          For each term, capture: <b>Domain meaning</b> (expert language), <b>ML interpretation</b> (labels/features/proxies),
+          and <b>Technical representation</b> (signals/fields/units). Add risks and stability.
+        </div>
+
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th class="term">Term</th>
+              <th class="col">Domain meaning</th>
+              <th class="col">ML interpretation / proxy</th>
+              <th class="col">Technical representation (fields, units)</th>
+              <th class="risk">Ambiguities / risks</th>
+              <th class="stable">Stability</th>
+            </tr>
+          </thead>
+          <tbody id="body">
+<tr>
+  <td><input value="Frame"></td>
+  <td><textarea>A single captured image of the surface area under inspection at a specific moment.</textarea></td>
+  <td><textarea>Model input sample (tensor) used for preprocessing/inference.</textarea></td>
+  <td><textarea>frame_id, timestamp_utc, camera_id, image_uri/bytes, calibration_version, camera_settings</textarea></td>
+  <td><textarea>Dropped/reordered frames; compression artifacts; inconsistent ROI/resolution.</textarea></td>
+  <td>
+    <input value="Stable">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Calibration Version"></td>
+  <td><textarea>The approved camera calibration used to interpret geometry and measurements.</textarea></td>
+  <td><textarea>Assumption embedded in preprocessing/mapping; affects pixel→mm conversion.</textarea></td>
+  <td><textarea>calibration_version, intrinsics/extrinsics refs in config store</textarea></td>
+  <td><textarea>Mismatch between acquisition/correlation/inference; silent geometry errors.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Production Context"></td>
+  <td><textarea>Production identity and process state for the material being inspected.</textarea></td>
+  <td><textarea>Conditional features (product/grade/recipe) influencing thresholds and routing.</textarea></td>
+  <td><textarea>product_id, batch_id/coil_id, recipe_id, grade, station_id, line_speed, encoder_pos, timestamp_utc</textarea></td>
+  <td><textarea>ID changes mid-run; unit mismatches; time skew across systems.</textarea></td>
+  <td>
+    <input value="Volatile">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Inspection Unit"></td>
+  <td><textarea>Traceable inspection slice tied to product identity and position reference.</textarea></td>
+  <td><textarea>Inference unit (image + context snapshot) passed into the model.</textarea></td>
+  <td><textarea>unit_id, frame_id, product_id, coil_id, position_ref, coord_frame_version, context_snapshot_id</textarea></td>
+  <td><textarea>Correlation mistakes misattribute defects; hard to debug later.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Position Reference"></td>
+  <td><textarea>Where on the product the defect occurred (traceability + action).</textarea></td>
+  <td><textarea>Derived output mapped from pixel location to world coordinates.</textarea></td>
+  <td><textarea>x_mm/y_mm or meter_mark or encoder_pos + coord_frame_version</textarea></td>
+  <td><textarea>Different coordinate origins; encoder drift; mapping changes.</textarea></td>
+  <td>
+    <input value="Volatile">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Defect Type"></td>
+  <td><textarea>Named category of surface defect used for decisions/reporting.</textarea></td>
+  <td><textarea>Classification label predicted per defect instance.</textarea></td>
+  <td><textarea>defect_type enum + taxonomy_version</textarea></td>
+  <td><textarea>Label definition drift; new classes without versioning.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Segmentation Mask"></td>
+  <td><textarea>Precise outline of defect area on the surface.</textarea></td>
+  <td><textarea>Pixel-wise prediction; postprocessed into contours/bboxes.</textarea></td>
+  <td><textarea>mask (bitmap/encoded), bbox (x,y,w,h), overlay_uri</textarea></td>
+  <td><textarea>Postprocessing changes affect comparability; area thresholds change outcomes.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Confidence"></td>
+  <td><textarea>How strongly the system believes the detected defect is real/correct.</textarea></td>
+  <td><textarea>Model score (probability/logit), ideally calibrated.</textarea></td>
+  <td><textarea>confidence float + calibration_version; confidence_threshold</textarea></td>
+  <td><textarea>Uncalibrated scores mislead operators; meaning changes across versions.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Verdict"></td>
+  <td><textarea>Operator-facing decision: OK / NG / REVIEW.</textarea></td>
+  <td><textarea>Decision policy applied on model outputs + thresholds + rules.</textarea></td>
+  <td><textarea>verdict, threshold_version, policy_version, evidence_uri</textarea></td>
+  <td><textarea>Policy changes not versioned; mixing scores + rules without governance.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+<tr>
+  <td><input value="Operator Override"></td>
+  <td><textarea>Operator corrects or confirms the system decision.</textarea></td>
+  <td><textarea>Feedback signal that may become training label after validation.</textarea></td>
+  <td><textarea>OperatorFeedbackRecorded {unit_id, action, corrected_label, reason_code, timestamp}</textarea></td>
+  <td><textarea>Free-text feedback unusable; inconsistent overrides bias data.</textarea></td>
+  <td>
+    <input value="Evolving">
+    <div style="height:8px"></div>
+    <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:0;padding:8px 10px;font-weight:900;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
+  </td>
+</tr>
+</tbody>
+        </table>
+
+        <div class="addRow hint">
+          Tip: Use Stability values like <b>Stable</b>, <b>Evolving</b>, <b>Volatile</b>. Volatile terms deserve contracts + tests.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const body = document.getElementById("body");
+
+    function rowTemplate() {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><input placeholder="e.g., defect severity"></td>
+        <td><textarea placeholder="What it means to domain experts"></textarea></td>
+        <td><textarea placeholder="Label definition, proxy, or feature mapping"></textarea></td>
+        <td><textarea placeholder="Signals/fields, units, reference frame, time meaning"></textarea></td>
+        <td><textarea placeholder="Confusions, edge cases, semantic drift risks"></textarea></td>
+        <td>
+          <input placeholder="Stable / Evolving / Volatile">
+          <div style="height:8px"></div>
+          <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:12px;padding:8px 10px;font-weight:800;border:1px solid #cfd6df;background:#ffffff;color:#111827;cursor:pointer">Remove</button>
+        </td>
+      `;
+      return tr;
+    }
+
+    function addRow() { body.appendChild(rowTemplate()); }
+    function clearAll() {
+      document.getElementById("ctx").value = "";
+      document.getElementById("why").value = "";
+      body.innerHTML = "";
+      for (let i=0;i<6;i++) addRow();
+    }
+
+    // init rows are pre-filled in HTML
+  </script>
+</body>
+</html>

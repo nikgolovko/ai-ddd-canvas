@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Bounded Context Canvas</title>
+  <style>
+    :root{
+      --page-bg:#ffffff;
+      --panel-bg:#ffffff;
+      --border:#1f1f1f;
+      --border-thin:#2b2b2b;
+      --header-bg:#e6e6e6;
+      --note-bg:#fff2a8;
+      --note-border:#d3c26a;
+      --text:#111111;
+      --muted:#555555;
+      --radius:0px;
+    }
+
+    html,body{height:100%;margin:0;background:var(--page-bg);color:var(--text);
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    .page{max-width:1200px;margin:0 auto;padding:18px 16px 40px;}
+    header{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;
+      padding-bottom:10px;border-bottom:3px solid var(--border);margin-bottom:14px;}
+    h1{margin:0;font-size:22px;font-weight:900;letter-spacing:.2px;}
+    .meta{color:var(--muted);font-size:12px;margin-top:4px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;}
+    button{border:2px solid var(--border);background:var(--page-bg);color:var(--text);
+      padding:10px 12px;border-radius:0;cursor:pointer;font-weight:800;font-size:12px;box-shadow:none;}
+    button:hover{background:#f6f6f6;}
+    .card{background:var(--panel-bg);border:2px solid var(--border);border-radius:var(--radius);box-shadow:none;overflow:hidden;}
+    .card .hd,.hd{padding:12px 14px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--header-bg);}
+    .card .hd .t,.hd .t{font-weight:900;font-size:14px;color:var(--text);text-transform:uppercase;letter-spacing:.3px;}
+    .card .bd,.bd{padding:12px 14px;background:#ffffff;}
+    .hint{color:var(--muted);font-size:12px;margin-bottom:8px;line-height:1.35;}
+    input,textarea,select{width:100%;box-sizing:border-box;border:2px solid var(--border-thin);background:#ffffff;color:var(--text);
+      border-radius:0;padding:10px 10px;font-size:13px;outline:none;}
+    textarea{min-height:110px;resize:vertical;line-height:1.35;}
+    .row{display:grid;gap:10px;}
+    .row.two{grid-template-columns:1fr 1fr;}
+    .row.three{grid-template-columns:1fr 1fr 1fr;}
+    .tag{font-size:12px;font-weight:900;color:#222;border:2px solid var(--note-border);padding:6px 10px;border-radius:0;
+      background:var(--note-bg);white-space:nowrap;text-transform:lowercase;}
+    table{width:100%;border-collapse:separate;border-spacing:0;border:2px solid var(--border);border-radius:0;overflow:hidden;}
+    th,td{border-right:2px solid var(--border);border-bottom:2px solid var(--border);padding:10px;vertical-align:top;}
+    th:last-child,td:last-child{border-right:0;}
+    tr:last-child td{border-bottom:0;}
+    th{font-size:12px;text-align:left;color:var(--text);background:var(--header-bg);text-transform:uppercase;letter-spacing:.3px;font-weight:900;}
+    td{background:#ffffff;}
+    @media (max-width:980px){.row.two,.row.three{grid-template-columns:1fr;}}
+    @media print{header .toolbar{display:none;}.page{padding:0;}button{display:none;}}
+  </style>
+
+  <style>
+    .grid{
+      margin-top:16px; display:grid; gap:14px;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      grid-template-areas:
+        "purpose purpose purpose"
+        "scope actors ownership"
+        "upstream downstream risks";
+    }
+    .small textarea{min-height:92px}
+    .purpose{grid-area:purpose}
+    .scope{grid-area:scope}
+    .actors{grid-area:actors}
+    .ownership{grid-area:ownership}
+    .upstream{grid-area:upstream}
+    .downstream{grid-area:downstream}
+    .risks{grid-area:risks}
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr; grid-template-areas:
+        "purpose" "scope" "actors" "ownership" "upstream" "downstream" "risks";
+      }
+    }
+  </style>
+
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>AI Bounded Context Canvas</h1>
+        <div class="meta">Define boundary, responsibilities, and ownership for an AI-enabled context.</div>
+      </div>
+      <div class="toolbar">
+        <button onclick="window.print()">Print / Save PDF</button>
+        <button onclick="document.querySelectorAll('textarea,input').forEach(e=>e.value='')">Clear</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card purpose">
+        <div class="hd"><div class="t">Context Name & Purpose</div><span class="tag">Boundary-first</span></div>
+        <div class="bd">
+          <div class="row two">
+            <div>
+              <div class="hint">Bounded Context name (domain term).</div>
+              <input placeholder="e.g., Surface Quality Inspection" / value="Production Context Integration">
+            </div>
+            <div>
+              <div class="hint">Context owner (team / role).</div>
+              <input placeholder="e.g., Quality Engineering" / value="OT/IT Integration Team">
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="hint">Purpose: what domain outcome does this context exist to achieve?</div>
+          <textarea placeholder="Describe the domain goal in plain language.">Expose a stable, versioned interface to production information from PLC/MES (identity + state). Normalize tags, units, and timestamps so downstream contexts can rely on consistent production semantics.</textarea>
+        </div>
+      </section>
+
+      <section class="card scope">
+        <div class="hd"><div class="t">In-Scope / Out-of-Scope Responsibilities</div><span class="tag">Clarity</span></div>
+        <div class="bd row two small">
+          <div>
+            <div class="hint">In-scope (what this context owns).</div>
+            <textarea placeholder="Responsibilities this context controls end-to-end.">• PLC tag ingestion and normalization
+• MES identity enrichment (product/batch/coil/run)
+• Time normalization (timestamp_utc)
+• Unit normalization (speed, encoder counts → mm)
+• Publish ProductionStateUpdated / ProductionIdentityChanged events
+• Detect missing/invalid production context</textarea>
+          </div>
+          <div>
+            <div class="hint">Out-of-scope (explicit exclusions).</div>
+            <textarea placeholder="Responsibilities owned elsewhere / not addressed.">• Camera integration (Image Acquisition)
+• Frame correlation logic (Correlation)
+• ML inference (Model Inference)
+• Operator UI/verdict (Decision & Operator)
+• Quality policy definition (owned by Quality), except passing required fields</textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card actors">
+        <div class="hd"><div class="t">Actors & System Touchpoints</div><span class="tag">Who interacts</span></div>
+        <div class="bd row">
+          <div class="hint">Key actors: Domain experts, operators, engineers, external systems.</div>
+          <textarea placeholder="List people/roles and systems that interact with this context.">• OT engineers (PLC program / tags)
+• IT/MES engineers (MES connectors)
+• Downstream consumers: Correlation, Decision, analytics
+• Quality engineers (identity semantics, recipe/grade definitions)</textarea>
+          <div class="hint">Primary inputs & outputs (domain level, not features).</div>
+          <textarea placeholder="Inputs: domain concepts consumed. Outputs: domain decisions/events produced.">Inputs:
+• PLC tags (speed, encoder position, station state)
+• MES data (product_id, batch/coil_id, recipe, grade)
+
+Outputs:
+• ProductionStateUpdated (normalized)
+• ProductionIdentityChanged (start/end events)
+• ProductionContextDegraded (missing IDs, stale data)</textarea>
+        </div>
+      </section>
+
+      <section class="card ownership">
+        <div class="hd"><div class="t">Ownership (RACI-lite)</div><span class="tag">Accountability</span></div>
+        <div class="bd row two">
+          <div>
+            <div class="hint">Domain ownership (policy/meaning).</div>
+            <textarea placeholder="Who decides definitions, tolerances, acceptance criteria?">Quality/Production defines meaning of identity fields (batch/coil/run), recipe/grade semantics, and required traceability elements.</textarea>
+          </div>
+          <div>
+            <div class="hint">Technical ownership (OT/IT ops, integration).</div>
+            <textarea placeholder="Who owns signals, deployment, runtime constraints, reliability?">Owns connectivity, security, tag mapping, unit conversion, data freshness monitoring, and versioning of published schema/semantics.</textarea>
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="row two">
+          <div>
+            <div class="hint">ML ownership (model behavior & monitoring).</div>
+            <textarea placeholder="Who owns training, evaluation, thresholds, drift monitoring?">Consumes production context as conditioning information; requests stable identifiers and time alignment constraints but does not control PLC/MES interfaces.</textarea>
+          </div>
+          <div>
+            <div class="hint">Escalation path (when something goes wrong).</div>
+            <textarea placeholder="Who gets paged / consulted / approves rollback?">Missing/stale IDs → OT/IT on-call.
+If identity cannot be guaranteed → Decision context must degrade (manual logging or REVIEW-only).</textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card upstream">
+        <div class="hd"><div class="t">Upstream Contexts</div><span class="tag">Dependencies</span></div>
+        <div class="bd row">
+          <div class="hint">What contexts provide inputs? What do you assume about them?</div>
+          <textarea placeholder="Upstream contexts + their published language and assumptions.">• PLC
+• MES
+• Time synchronization infrastructure (NTP/PTP)
+• Tag mapping configuration</textarea>
+        </div>
+      </section>
+
+      <section class="card downstream">
+        <div class="hd"><div class="t">Downstream Contexts</div><span class="tag">Consumers</span></div>
+        <div class="bd row">
+          <div class="hint">Who consumes your outputs? What do they rely on?</div>
+          <textarea placeholder="Downstream contexts + what they need to trust.">• Frame-to-Product Correlation
+• Decision & Operator Interaction (traceability)
+• Data lake / historian</textarea>
+        </div>
+      </section>
+
+      <section class="card risks">
+        <div class="hd"><div class="t">Boundary Risks & Known Frictions</div><span class="tag">Reality check</span></div>
+        <div class="bd row">
+          <div class="hint">Where do misunderstandings happen today? (language, handoffs, ownership, latency)</div>
+          <textarea placeholder="List recurring friction points and how to mitigate them.">• Same field names with different meanings (units, origins)
+• Identity changes mid-run without event → misattribution
+• Time skew breaks correlation
+• PLC code change breaks semantics without schema change</textarea>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
