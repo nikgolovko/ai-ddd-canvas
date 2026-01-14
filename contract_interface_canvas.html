@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract & Interface Canvas (AI-Aware)</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contract &amp; Interface Canvas (AI-Aware)</title>
+<style>
 
 /* =========================================================
    Worksheet-style Canvas (like provided reference image)
@@ -240,137 +241,176 @@ p{ line-height: 1.35; }
   .section{ page-break-inside: avoid; }
 }
 
+
+
+/* --- Workshop hints --- */
+.hint{
+  margin-top:8px;
+  padding:8px 10px;
+  border:1.5px dashed #111;
+  border-radius:12px;
+  background:rgba(255,255,255,0.65);
+  font-size:12px;
+  line-height:1.35;
+  color:#111827;
+}
+.hint .tag{
+  display:inline-block;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.02em;
+  padding:2px 8px;
+  margin-right:6px;
+  border:2px solid #111;
+  border-radius:999px;
+  background:#E0F2FE;
+}
+.hint code{
+  background:#FEF3C7;
+  border:1.5px solid #111;
+  border-radius:8px;
+  padding:1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+.hint ul{ margin:6px 0 0 18px; padding:0; }
+.hint li{ margin:4px 0; }
+
 </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📜 Contract & Interface Canvas (AI-Aware)</h1>
-            <p class="header-subtitle">Make integrations safe under uncertainty and change</p>
-            <p class="header-description">
+<div class="container">
+<div class="header">
+<h1>📜 Contract &amp; Interface Canvas (AI-Aware)</h1>
+<p class="header-subtitle">Make integrations safe under uncertainty and change</p>
+<p class="header-description">
                 Defines semantic contracts, failure modes, fallbacks, and versioning rules to ensure AI evolution 
                 never silently breaks production behavior. Extends traditional API contracts to handle probabilistic 
                 outputs and model evolution.
             </p>
-        </div>
-        
-        <div class="controls">
-            <button class="btn btn-primary" onclick="saveCanvas()">💾 Save</button>
-            <button class="btn btn-secondary" onclick="loadCanvas()">📂 Load</button>
-            <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear</button>
-            <button class="btn btn-success" onclick="exportCanvas()">📥 Export</button>
-            <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
-        </div>
-        
-        <div class="canvas-content">
-            <!-- Service Identity -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🎯</span> Service Identity</div><span class="tag">identity</span></div>
-                <div style="margin-bottom: 15px;">
-                    <label class="field-label">Service Name:</label>
-                    <input type="text" id="service-name" placeholder="e.g., DefectDetectionService">
+</div>
+<div class="controls">
+<button class="btn btn-primary" onclick="saveCanvas()">💾 Save</button>
+<button class="btn btn-secondary" onclick="loadCanvas()">📂 Load</button>
+<button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear</button>
+<button class="btn btn-success" onclick="exportCanvas()">📥 Export</button>
+<button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+</div>
+<div class="canvas-content">
+<!-- Service Identity -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">🎯</span> Service Identity</div><span class="tag">identity</span></div>
+<div style="margin-bottom: 15px;">
+<label class="field-label">Service Name:</label>
+<input id="service-name" placeholder="e.g., DefectDetectionService" type="text"/><div class="hint" data-for="service-name"><span class="tag">Tip</span><ul>
+<li>Example: <code>SurfaceQualityInspectionService</code></li></ul></div>
+</div>
+<div>
+<label class="field-label">Purpose &amp; Capability:</label>
+<textarea id="service-purpose"></textarea><div class="hint" data-for="service-purpose"><span class="tag">Hint</span></div>
+</div>
+</div>
+<!-- Input Contract -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">📥</span> Input Contract</div><span class="tag">inputs</span></div>
+<div id="inputs-container"></div>
+<button class="add-btn" onclick="addInput()">+ Add Input Parameter</button>
+<div class="example-box">
+<strong>Example:</strong> image (RGBImage, 2048x2048), part_id (string), metadata (JSON)
                 </div>
-                <div>
-                    <label class="field-label">Purpose & Capability:</label>
-                    <textarea id="service-purpose"></textarea>
+</div>
+<!-- Output Contract -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">📤</span> Output Contract</div><span class="tag">outputs</span></div>
+<div id="outputs-container"></div>
+<button class="add-btn" onclick="addOutput()">+ Add Output Parameter</button>
+<div class="example-box">
+<strong>Example:</strong> defect_detected (boolean), confidence (float 0-1), defect_type (enum), model_version (string)
                 </div>
-            </div>
-            
-            <!-- Input Contract -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📥</span> Input Contract</div><span class="tag">inputs</span></div>
-                <div id="inputs-container"></div>
-                <button class="add-btn" onclick="addInput()">+ Add Input Parameter</button>
-                <div class="example-box">
-                    <strong>Example:</strong> image (RGBImage, 2048x2048), part_id (string), metadata (JSON)
+</div>
+<!-- Behavioral Contract -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚡</span> Behavioral Contract</div><span class="tag">behavior</span></div>
+<p style="color: #6c757d; margin-bottom: 20px;">Not just data contracts - behavioral guarantees based on confidence and context</p>
+<div id="behavioral-rules-container"></div>
+<button class="add-btn" onclick="addBehavioralRule()">+ Add Behavioral Rule</button>
+<div class="example-box">
+<strong>Example:</strong> confidence &gt;= 0.90 → Accuracy guarantee: &lt;2% error rate | latency: p95 &lt; 200ms
                 </div>
-            </div>
-            
-            <!-- Output Contract -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📤</span> Output Contract</div><span class="tag">outputs</span></div>
-                <div id="outputs-container"></div>
-                <button class="add-btn" onclick="addOutput()">+ Add Output Parameter</button>
-                <div class="example-box">
-                    <strong>Example:</strong> defect_detected (boolean), confidence (float 0-1), defect_type (enum), model_version (string)
+</div>
+<!-- Failure Modes -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span> Failure Modes &amp; Handling</div><span class="tag">resilience</span></div>
+<div id="failure-modes-container"></div>
+<button class="add-btn" onclick="addFailureMode()">+ Add Failure Mode</button>
+<div class="example-box">
+<strong>Example:</strong> Service unavailable (503) → Consumer falls back to manual process | Alert operations team
                 </div>
-            </div>
-            
-            <!-- Behavioral Contract -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚡</span> Behavioral Contract</div><span class="tag">behavior</span></div>
-                <p style="color: #6c757d; margin-bottom: 20px;">Not just data contracts - behavioral guarantees based on confidence and context</p>
-                <div id="behavioral-rules-container"></div>
-                <button class="add-btn" onclick="addBehavioralRule()">+ Add Behavioral Rule</button>
-                <div class="example-box">
-                    <strong>Example:</strong> confidence >= 0.90 → Accuracy guarantee: <2% error rate | latency: p95 < 200ms
+</div>
+<!-- Versioning & Evolution -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span> Versioning &amp; Evolution</div><span class="tag">evolution</span></div>
+<div class="grid-2">
+<div>
+<label class="field-label">Model Versioning Strategy:</label>
+<textarea id="model-versioning"></textarea><div class="hint" data-for="model-versioning"><span class="tag">Example</span><ul>
+<li>Model card, evaluation summary, risk notes, rollout plan</li></ul></div>
+</div>
+<div>
+<label class="field-label">API Versioning Strategy:</label>
+<textarea id="api-versioning"></textarea><div class="hint" data-for="api-versioning"><span class="tag">Tip</span><ul>
+<li>REST/gRPC: <code>/v1</code>, <code>/v2</code></li>
+<li>Events: <code>schema_version</code> in payload</li></ul></div>
+</div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Backward Compatibility Rules:</label>
+<textarea id="backward-compat"></textarea><div class="hint" data-for="backward-compat"><span class="tag">Hint</span></div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Breaking Change Process:</label>
+<textarea id="breaking-changes"></textarea><div class="hint" data-for="breaking-changes"><span class="tag">Tip</span><ul>
+<li>Migration guide + sample payloads</li>
+<li>Dual publish (old+new) when feasible</li>
+<li>Consumer sign-off</li></ul></div>
+</div>
+<div class="example-box">
+<strong>Model Versioning:</strong> semantic versioning (major.minor.patch) - major = breaking behavioral change
+                    <br/><strong>Deployment:</strong> Blue-green with canary (5% → 25% → 100% over 7 days)
                 </div>
-            </div>
-            
-            <!-- Failure Modes -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span> Failure Modes & Handling</div><span class="tag">resilience</span></div>
-                <div id="failure-modes-container"></div>
-                <button class="add-btn" onclick="addFailureMode()">+ Add Failure Mode</button>
-                <div class="example-box">
-                    <strong>Example:</strong> Service unavailable (503) → Consumer falls back to manual process | Alert operations team
-                </div>
-            </div>
-            
-            <!-- Versioning & Evolution -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span> Versioning & Evolution</div><span class="tag">evolution</span></div>
-                <div class="grid-2">
-                    <div>
-                        <label class="field-label">Model Versioning Strategy:</label>
-                        <textarea id="model-versioning"></textarea>
-                    </div>
-                    <div>
-                        <label class="field-label">API Versioning Strategy:</label>
-                        <textarea id="api-versioning"></textarea>
-                    </div>
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Backward Compatibility Rules:</label>
-                    <textarea id="backward-compat"></textarea>
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Breaking Change Process:</label>
-                    <textarea id="breaking-changes"></textarea>
-                </div>
-                <div class="example-box">
-                    <strong>Model Versioning:</strong> semantic versioning (major.minor.patch) - major = breaking behavioral change
-                    <br><strong>Deployment:</strong> Blue-green with canary (5% → 25% → 100% over 7 days)
-                </div>
-            </div>
-            
-            <!-- Quality Guarantees -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">✅</span> Quality Guarantees</div><span class="tag">sla</span></div>
-                <div class="grid-2">
-                    <div>
-                        <label class="field-label">Performance SLAs:</label>
-                        <textarea id="performance-slas"></textarea>
-                    </div>
-                    <div>
-                        <label class="field-label">Accuracy Guarantees:</label>
-                        <textarea id="accuracy-guarantees"></textarea>
-                    </div>
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Monitoring & Observability:</label>
-                    <textarea id="monitoring"></textarea>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p><strong>Contract & Interface Canvas (AI-Aware)</strong> | DDD Strategic Design for AI Systems</p>
-            <p>Ensures safe integration under model evolution and uncertainty</p>
-        </div>
-    </div>
-    
-    <script>
+</div>
+<!-- Quality Guarantees -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">✅</span> Quality Guarantees</div><span class="tag">sla</span></div>
+<div class="grid-2">
+<div>
+<label class="field-label">Performance SLAs:</label>
+<textarea id="performance-slas"></textarea><div class="hint" data-for="performance-slas"><span class="tag">Example</span><ul>
+<li>Latency: <code>p95</code>/<code>p99</code></li>
+<li>Availability and degraded mode behavior</li></ul></div>
+</div>
+<div>
+<label class="field-label">Accuracy Guarantees:</label>
+<textarea id="accuracy-guarantees"></textarea><div class="hint" data-for="accuracy-guarantees"><span class="tag">Hint</span><ul>
+<li>Calibration + thresholds + human review</li>
+<li>Continuous evaluation on held-out + feedback data</li></ul></div>
+</div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Monitoring &amp; Observability:</label>
+<textarea id="monitoring"></textarea><div class="hint" data-for="monitoring"><span class="tag">Tip</span><ul>
+<li>Latency/throughput/errors</li>
+<li>Confidence distribution and drift</li>
+<li>Override/disagreement rate</li>
+<li>Audit logs for compliance</li></ul></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<p><strong>Contract &amp; Interface Canvas (AI-Aware)</strong> | DDD Strategic Design for AI Systems</p>
+<p>Ensures safe integration under model evolution and uncertainty</p>
+</div>
+</div>
+<script>
         function getInputTemplate(index, data = {}) {
             return `
                 <div class="item-card" data-index="${index}">

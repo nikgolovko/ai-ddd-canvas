@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubiquitous Language Alignment Canvas</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ubiquitous Language Alignment Canvas</title>
+<style>
 
 /* =========================================================
    Worksheet-style Canvas (like provided reference image)
@@ -240,133 +241,163 @@ p{ line-height: 1.35; }
   .section{ page-break-inside: avoid; }
 }
 
+
+
+/* --- Workshop hints --- */
+.hint{
+  margin-top:8px;
+  padding:8px 10px;
+  border:1.5px dashed #111;
+  border-radius:12px;
+  background:rgba(255,255,255,0.65);
+  font-size:12px;
+  line-height:1.35;
+  color:#111827;
+}
+.hint .tag{
+  display:inline-block;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.02em;
+  padding:2px 8px;
+  margin-right:6px;
+  border:2px solid #111;
+  border-radius:999px;
+  background:#E0F2FE;
+}
+.hint code{
+  background:#FEF3C7;
+  border:1.5px solid #111;
+  border-radius:8px;
+  padding:1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+.hint ul{ margin:6px 0 0 18px; padding:0; }
+.hint li{ margin:4px 0; }
+
 </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🗣️ Ubiquitous Language Alignment Canvas</h1>
-            <p class="header-subtitle">Align meaning across Domain, ML, and OT/IT teams</p>
-            <p class="header-description">
+<div class="container">
+<div class="header">
+<h1>🗣️ Ubiquitous Language Alignment Canvas</h1>
+<p class="header-subtitle">Align meaning across Domain, ML, and OT/IT teams</p>
+<p class="header-description">
                 Creates shared definitions for key terms within the bounded context. Exposes semantic mismatches early 
                 and prevents silent drift in concepts like confidence, defect type, and position. Based on DDD Ubiquitous 
                 Language extended to handle AI-specific semantic challenges.
             </p>
-        </div>
-        
-        <div class="controls">
-            <button class="btn btn-primary" onclick="saveCanvas()">💾 Save Canvas</button>
-            <button class="btn btn-secondary" onclick="loadCanvas()">📂 Load Canvas</button>
-            <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear All</button>
-            <button class="btn btn-success" onclick="exportCanvas()">📥 Export JSON</button>
-            <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
-        </div>
-        
-        <div class="canvas-content">
-            <!-- Context Scope -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📍</span>
+</div>
+<div class="controls">
+<button class="btn btn-primary" onclick="saveCanvas()">💾 Save Canvas</button>
+<button class="btn btn-secondary" onclick="loadCanvas()">📂 Load Canvas</button>
+<button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear All</button>
+<button class="btn btn-success" onclick="exportCanvas()">📥 Export JSON</button>
+<button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+</div>
+<div class="canvas-content">
+<!-- Context Scope -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">📍</span>
                     Bounded Context Scope</div><span class="tag">scope</span></div>
-                <div>
-                    <label class="field-label">Context Name:</label>
-                    <input type="text" id="context-name" placeholder="Name of the bounded context">
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Language Scope:</label>
-                    <textarea id="language-scope" placeholder="What domain does this vocabulary cover? What's explicitly in/out of scope?"></textarea>
-                </div>
-            </div>
-            
-            <!-- Canonical Terms -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📖</span>
-                    Canonical Terms & Definitions</div><span class="tag">canonical</span></div>
-                <p style="color: #6c757d; margin-bottom: 20px;">
+<div>
+<label class="field-label">Context Name:</label>
+<input id="context-name" placeholder="Name of the bounded context" type="text"/><div class="hint" data-for="context-name"><span class="tag">Tip</span></div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Language Scope:</label>
+<textarea id="language-scope" placeholder="What domain does this vocabulary cover? What's explicitly in/out of scope?"></textarea><div class="hint" data-for="language-scope"><span class="tag">Hint</span><ul>
+<li>UI labels, alert text, dashboards</li>
+<li>API/event schemas and runbooks</li></ul></div>
+</div>
+</div>
+<!-- Canonical Terms -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">📖</span>
+                    Canonical Terms &amp; Definitions</div><span class="tag">canonical</span></div>
+<p style="color: #6c757d; margin-bottom: 20px;">
                     Core terms with precise, agreed-upon meaning within this bounded context. These are THE definitions - 
                     all stakeholders (domain experts, ML engineers, IT/OT) use these exact meanings.
                 </p>
-                <div id="canonical-terms-container" class="term-grid"></div>
-                <button class="add-btn" onclick="addCanonicalTerm()">+ Add Canonical Term</button>
-                
-                <div class="example-box">
-                    <strong>Example Canonical Term:</strong><br>
-                    <strong>Term:</strong> "Defect"<br>
-                    <strong>Definition:</strong> A surface anomaly that deviates from specification by >0.1mm depth OR affects >2% of surface area, 
-                    detectable via visual inspection. Includes: scratches, dents, discoloration. Excludes: normal wear, design features.<br>
-                    <strong>Domain Usage:</strong> Quality inspectors use visual comparison against reference samples<br>
-                    <strong>ML Interpretation:</strong> Anomaly in texture/geometry features with confidence >0.8<br>
-                    <strong>System Representation:</strong> defect_flag (boolean), defect_type (enum), confidence (float 0-1)
+<div class="term-grid" id="canonical-terms-container"></div>
+<button class="add-btn" onclick="addCanonicalTerm()">+ Add Canonical Term</button>
+<div class="example-box">
+<strong>Example Canonical Term:</strong><br/>
+<strong>Term:</strong> "Defect"<br/>
+<strong>Definition:</strong> A surface anomaly that deviates from specification by &gt;0.1mm depth OR affects &gt;2% of surface area, 
+                    detectable via visual inspection. Includes: scratches, dents, discoloration. Excludes: normal wear, design features.<br/>
+<strong>Domain Usage:</strong> Quality inspectors use visual comparison against reference samples<br/>
+<strong>ML Interpretation:</strong> Anomaly in texture/geometry features with confidence &gt;0.8<br/>
+<strong>System Representation:</strong> defect_flag (boolean), defect_type (enum), confidence (float 0-1)
                 </div>
-            </div>
-            
-            <!-- Semantic Mismatches -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span>
-                    Semantic Mismatches & Resolutions</div><span class="tag">clarity</span></div>
-                <p style="color: #6c757d; margin-bottom: 20px;">
+</div>
+<!-- Semantic Mismatches -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span>
+                    Semantic Mismatches &amp; Resolutions</div><span class="tag">clarity</span></div>
+<p style="color: #6c757d; margin-bottom: 20px;">
                     Terms that mean different things to different groups. Document the mismatch and how it's resolved.
                 </p>
-                <div id="mismatches-container"></div>
-                <button class="add-btn" onclick="addMismatch()">+ Add Semantic Mismatch</button>
-                
-                <div class="example-box">
-                    <strong>Example Mismatch:</strong><br>
-                    <strong>Term:</strong> "Precision"<br>
-                    <strong>Domain Meaning:</strong> Manufacturing tolerance (±0.01mm)<br>
-                    <strong>ML Meaning:</strong> True positives / (True positives + False positives)<br>
-                    <strong>Resolution:</strong> Use "dimensional_precision" and "detection_precision" to disambiguate<br>
-                    <strong>Severity:</strong> High - caused production errors in initial deployment
+<div id="mismatches-container"></div>
+<button class="add-btn" onclick="addMismatch()">+ Add Semantic Mismatch</button>
+<div class="example-box">
+<strong>Example Mismatch:</strong><br/>
+<strong>Term:</strong> "Precision"<br/>
+<strong>Domain Meaning:</strong> Manufacturing tolerance (±0.01mm)<br/>
+<strong>ML Meaning:</strong> True positives / (True positives + False positives)<br/>
+<strong>Resolution:</strong> Use "dimensional_precision" and "detection_precision" to disambiguate<br/>
+<strong>Severity:</strong> High - caused production errors in initial deployment
                 </div>
-            </div>
-            
-            <!-- ML-Specific Concepts -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🤖</span>
+</div>
+<!-- ML-Specific Concepts -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">🤖</span>
                     ML-Specific Concepts (Domain Translation)</div><span class="tag">translation</span></div>
-                <p style="color: #6c757d; margin-bottom: 20px;">
+<p style="color: #6c757d; margin-bottom: 20px;">
                     ML/AI concepts that need clear business meaning. Make probabilistic/statistical concepts concrete.
                 </p>
-                <div id="ml-concepts-container" class="term-grid"></div>
-                <button class="add-btn" onclick="addMLConcept()">+ Add ML Concept</button>
-                
-                <div class="example-box">
-                    <strong>Example:</strong><br>
-                    <strong>ML Concept:</strong> "Model Confidence"<br>
-                    <strong>Business Translation:</strong> How certain the AI is about its classification (0-100%)<br>
-                    <strong>Decision Rule:</strong> >90% = automate, 70-90% = flag for review, <70% = require human decision<br>
-                    <strong>Business Impact:</strong> Determines automation level and throughput
+<div class="term-grid" id="ml-concepts-container"></div>
+<button class="add-btn" onclick="addMLConcept()">+ Add ML Concept</button>
+<div class="example-box">
+<strong>Example:</strong><br/>
+<strong>ML Concept:</strong> "Model Confidence"<br/>
+<strong>Business Translation:</strong> How certain the AI is about its classification (0-100%)<br/>
+<strong>Decision Rule:</strong> &gt;90% = automate, 70-90% = flag for review, &lt;70% = require human decision<br/>
+<strong>Business Impact:</strong> Determines automation level and throughput
                 </div>
-            </div>
-            
-            <!-- Concept Drift Tracking -->
-            <div class="section">
-                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span>
+</div>
+<!-- Concept Drift Tracking -->
+<div class="section">
+<div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span>
                     Concept Drift Tracking</div><span class="tag">drift</span></div>
-                <p style="color: #6c757d; margin-bottom: 20px;">
+<p style="color: #6c757d; margin-bottom: 20px;">
                     How do definitions evolve? What changes trigger vocabulary updates?
                 </p>
-                <div>
-                    <label class="field-label">Known Drift Scenarios:</label>
-                    <textarea id="drift-scenarios" placeholder="When might term meanings change? (e.g., new defect types, updated quality standards, model retraining)"></textarea>
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Vocabulary Update Process:</label>
-                    <textarea id="update-process" placeholder="How are vocabulary changes proposed, reviewed, and propagated across teams?"></textarea>
-                </div>
-                <div style="margin-top: 15px;">
-                    <label class="field-label">Version Control:</label>
-                    <textarea id="version-control" placeholder="How is vocabulary versioned? How do we track changes over time?"></textarea>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <p><strong>Ubiquitous Language Alignment Canvas</strong> | DDD Strategic Design for AI Systems</p>
-            <p>Prevents semantic drift and ensures shared understanding across technical domains</p>
-        </div>
-    </div>
-    
-    <script>
+<div>
+<label class="field-label">Known Drift Scenarios:</label>
+<textarea id="drift-scenarios" placeholder="When might term meanings change? (e.g., new defect types, updated quality standards, model retraining)"></textarea><div class="hint" data-for="drift-scenarios"><span class="tag">Example</span><ul>
+<li>Synonyms (<code>mark</code> vs <code>scratch</code>)</li>
+<li>Taxonomy expansion or policy changes</li></ul></div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Vocabulary Update Process:</label>
+<textarea id="update-process" placeholder="How are vocabulary changes proposed, reviewed, and propagated across teams?"></textarea><div class="hint" data-for="update-process"><span class="tag">Tip</span><ul>
+<li>Propose change → review board → publish → communicate → train users</li></ul></div>
+</div>
+<div style="margin-top: 15px;">
+<label class="field-label">Version Control:</label>
+<textarea id="version-control" placeholder="How is vocabulary versioned? How do we track changes over time?"></textarea><div class="hint" data-for="version-control"><span class="tag">Hint</span><ul>
+<li>Embed <code>taxonomy_version</code> in inference + feedback records</li>
+<li>Keep a changelog with effective dates</li></ul></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<p><strong>Ubiquitous Language Alignment Canvas</strong> | DDD Strategic Design for AI Systems</p>
+<p>Prevents semantic drift and ensures shared understanding across technical domains</p>
+</div>
+</div>
+<script>
         function getCanonicalTermTemplate(index, data = {}) {
             return `
                 <div class="term-card" data-index="${index}">

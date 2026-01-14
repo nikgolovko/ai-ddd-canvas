@@ -307,6 +307,40 @@ input[type="text"]:focus, textarea:focus, select:focus{
   .sheet{ box-shadow:none; }
   .section-card{ page-break-inside: avoid; }
 }
+
+
+/* --- Workshop hints --- */
+.hint{
+  margin-top:8px;
+  padding:8px 10px;
+  border:1.5px dashed #111;
+  border-radius:12px;
+  background:rgba(255,255,255,0.65);
+  font-size:12px;
+  line-height:1.35;
+  color:#111827;
+}
+.hint .tag{
+  display:inline-block;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.02em;
+  padding:2px 8px;
+  margin-right:6px;
+  border:2px solid #111;
+  border-radius:999px;
+  background:#E0F2FE;
+}
+.hint code{
+  background:#FEF3C7;
+  border:1.5px solid #111;
+  border-radius:8px;
+  padding:1px 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+.hint ul{ margin:6px 0 0 18px; padding:0; }
+.hint li{ margin:4px 0; }
+
 </style>
 </head>
 <body>
@@ -330,51 +364,64 @@ input[type="text"]:focus, textarea:focus, select:focus{
         </button>
 </div></div>
 </div>
-
 <div class="canvas-workspace">
-
 <div class="sheet"><div class="canvas-grid">
 <!-- Left Column -->
 <div style="display: flex; flex-direction: column; gap: 24px;">
 <!-- Context Identity -->
 <div class="section-card"><h2 class="section-title"><div class="title-left">Context Identity</div><span class="pill">boundary-first</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">Context Name</label>
-<input id="context-name" placeholder="e.g., Defect Detection, Demand Forecasting" type="text"/>
+<input id="context-name" placeholder="e.g., Defect Detection, Demand Forecasting" type="text"/><div class="hint" data-for="context-name"><span class="tag">Tip</span><strong>business capability name</strong><ul>
+<li>Good: <code>Surface Quality Inspection</code></li>
+<li>Avoid: <code>YOLO Microservice</code></li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Purpose</label>
-<textarea id="context-purpose" placeholder="What business capability does this AI-powered context provide?"></textarea>
+<textarea id="context-purpose" placeholder="What business capability does this AI-powered context provide?"></textarea><div class="hint" data-for="context-purpose"><span class="tag">Hint</span><strong>who</strong><strong>what decision</strong><strong>time constraints</strong><ul>
+<li>Include SLA constraints (e.g., <code>p99 &lt; 200ms</code>) if relevant</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Domain Language</label>
-<textarea id="domain-language" placeholder="Key domain terms used within this context"></textarea>
+<textarea id="domain-language" placeholder="Key domain terms used within this context"></textarea><div class="hint" data-for="domain-language"><span class="tag">Tip</span><strong>canonical terms</strong><ul>
+<li>Include taxonomy terms: <code>defect category</code>, <code>severity</code>, <code>inspection segment</code></li>
+<li>Explicitly differentiate <code>prediction</code> vs <code>disposition</code></li></ul></div>
 </div></div></div>
 <!-- AI Responsibilities -->
 <div class="section-card highlight-purple"><h2 class="section-title"><div class="title-left">AI Responsibilities</div><span class="pill">clarity</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">What AI Owns</label>
-<textarea id="ai-owns" placeholder="Decisions and processes that the AI model is responsible for"></textarea>
+<textarea id="ai-owns" placeholder="Decisions and processes that the AI model is responsible for"></textarea><div class="hint" data-for="ai-owns"><span class="tag">Hint</span><strong>accountable for</strong><ul>
+<li>Inference + confidence + evidence</li>
+<li>Routing uncertain cases to human review</li>
+<li>Drift signals + retraining triggers</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">What AI Does NOT Own</label>
-<textarea id="ai-not-owns" placeholder="Decisions explicitly outside AI's responsibility"></textarea>
+<textarea id="ai-not-owns" placeholder="Decisions explicitly outside AI's responsibility"></textarea><div class="hint" data-for="ai-not-owns"><span class="tag">Tip</span><ul>
+<li>Examples: PLC actuation, ERP scheduling, maintenance execution</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Model Type</label>
-<input id="model-type" placeholder="e.g., CNN (ResNet50), YOLO v8" type="text"/>
+<input id="model-type" placeholder="e.g., CNN (ResNet50), YOLO v8" type="text"/><div class="hint" data-for="model-type"><span class="tag">Example</span><strong>model family + variant + serving format</strong><ul>
+<li><code>YOLOv8-seg (ONNX)</code> or <code>ResNet50 (TorchScript)</code></li>
+<li>Note any calibration/thresholding strategy</li></ul></div>
 <div class="help-text">High-level architecture for context understanding</div>
 </div></div></div>
 <!-- Degradation Rules -->
 <div class="section-card"><h2 class="section-title"><div class="title-left">Degradation &amp; Escalation</div><span class="pill">accountability</span></h2><div class="section-body"><div class="field-group">
-<label class="field-label">Confidence Thresholds</label>
+<label class="field-label">Confidence Thresholds</label><div class="hint" data-for="confidence-thresholds-container"><span class="tag">How to fill</span><strong>automation vs human review</strong><ul>
+<li>Use 2–3 bands (e.g., auto-pass / hold-for-review / manual)</li>
+<li>Always include impact and safe-mode behavior</li></ul></div>
 <div id="confidence-thresholds-container"></div>
 <button class="add-btn" onclick="addConfidenceThreshold()">
                             + Add Threshold Rule
                         </button>
 </div><div class="field-group">
-<label class="field-label">Escalation Triggers</label>
+<label class="field-label">Escalation Triggers</label><div class="hint" data-for="escalation-triggers-container"><span class="tag">How to fill</span><ul>
+<li>Examples: high-severity + high confidence; override-rate spike</li></ul></div>
 <div class="field-sublabel">When should AI hand off to human or fallback?</div>
 <div id="escalation-triggers-container"></div>
 <button class="add-btn" onclick="addEscalationTrigger()">
                             + Add Escalation
                         </button>
 </div><div class="field-group">
-<label class="field-label">Stop Automation</label>
+<label class="field-label">Stop Automation</label><div class="hint" data-for="stop-conditions-container"><span class="tag">How to fill</span><ul>
+<li>Examples: error-rate spike, dependency outage, detected drift</li></ul></div>
 <div class="field-sublabel">When should AI be completely disabled?</div>
 <div id="stop-conditions-container"></div>
 <button class="add-btn" onclick="addStopCondition()">
@@ -384,13 +431,19 @@ input[type="text"]:focus, textarea:focus, select:focus{
 <!-- Communication -->
 <div class="section-card"><h2 class="section-title"><div class="title-left">Inbound &amp; Outbound</div><span class="pill">who interacts</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">Inbound</label>
-<textarea id="inbound" placeholder="Commands, events, queries coming IN"></textarea>
+<textarea id="inbound" placeholder="Commands, events, queries coming IN"></textarea><div class="hint" data-for="inbound"><span class="tag">Example</span><strong>events/commands/queries</strong><ul>
+<li>Frames/images + <code>line_id</code>, <code>camera_id</code>, timestamp</li>
+<li>PLC/SCADA context for correlation</li>
+<li>Human feedback/overrides</li></ul></div>
 <div class="example-card">
 <strong>Example:</strong> AnalyzeImageCommand, RetrainModelEvent, GetModelMetricsQuery
                         </div>
 </div><div class="field-group">
 <label class="field-label">Outbound</label>
-<textarea id="outbound" placeholder="Domain events, responses going OUT"></textarea>
+<textarea id="outbound" placeholder="Domain events, responses going OUT"></textarea><div class="hint" data-for="outbound"><span class="tag">Tip</span><strong>contracts</strong><ul>
+<li>Inference event with <code>model_version</code> + <code>taxonomy_version</code></li>
+<li>Alerts to operators/QA</li>
+<li>Curated training datasets</li></ul></div>
 <div class="example-card">
 <strong>Example:</strong> DefectDetectedEvent, ConfidenceDegradedEvent, AnalysisCompletedResponse
                         </div>
@@ -406,7 +459,10 @@ input[type="text"]:focus, textarea:focus, select:focus{
 <option value="core">Core Domain</option>
 <option value="supporting">Supporting</option>
 <option value="generic">Generic</option>
-</select>
+</select><div class="hint" data-for="domain-type"><span class="tag">Hint</span><ul>
+<li><strong>Core</strong> = differentiating business capability</li>
+<li><strong>Supporting</strong> = enables core</li>
+<li><strong>Generic</strong> = commodity</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Evolution Strategy</label>
 <select id="evolution-strategy">
@@ -414,7 +470,9 @@ input[type="text"]:focus, textarea:focus, select:focus{
 <option value="custom">Custom-built</option>
 <option value="product">Product/Service</option>
 <option value="commodity">Commodity</option>
-</select>
+</select><div class="hint" data-for="evolution-strategy"><span class="tag">Tip</span><ul>
+<li><strong>Product</strong> = stable roadmap + governance</li>
+<li><strong>Experiment</strong> = rapid iteration + guardrails</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Business Criticality</label>
 <select id="business-criticality">
@@ -422,34 +480,50 @@ input[type="text"]:focus, textarea:focus, select:focus{
 <option value="high">High</option>
 <option value="medium">Medium</option>
 <option value="low">Low</option>
-</select>
+</select><div class="hint" data-for="business-criticality"><span class="tag">Hint</span><ul>
+<li>Human oversight, canary releases, rollback plan, audit logs</li></ul></div>
 </div></div></div>
 <!-- Dependencies -->
 <div class="section-card"><h2 class="section-title"><div class="title-left">Dependencies</div><span class="pill">dependencies</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">Upstream Contexts</label>
-<textarea id="upstream" placeholder="What contexts does this depend on?"></textarea>
+<textarea id="upstream" placeholder="What contexts does this depend on?"></textarea><div class="hint" data-for="upstream"><span class="tag">Example</span><ul>
+<li>Manufacturing Ops (cameras, illumination)</li>
+<li>Automation/IT (PLC/SCADA, historian)</li>
+<li>ERP/MES (product metadata)</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Downstream Contexts</label>
-<textarea id="downstream" placeholder="What contexts depend on this?"></textarea>
+<textarea id="downstream" placeholder="What contexts depend on this?"></textarea><div class="hint" data-for="downstream"><span class="tag">Tip</span><ul>
+<li>Operator dashboard, QA workflow, analytics, training pipeline</li></ul></div>
 </div></div></div>
 <!-- Fallback -->
 <div class="section-card highlight-blue"><h2 class="section-title"><div class="title-left">Fallback Mechanisms</div><span class="pill">reality check</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">Primary Fallback</label>
-<textarea id="primary-fallback" placeholder="What happens when AI fails or degrades?"></textarea>
+<textarea id="primary-fallback" placeholder="What happens when AI fails or degrades?"></textarea><div class="hint" data-for="primary-fallback"><span class="tag">Hint</span><ul>
+<li>Default to <code>hold-for-review</code> and keep capturing evidence</li>
+<li>Disable auto-actions if health degrades</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Recovery Strategy</label>
-<textarea id="recovery-strategy" placeholder="How does the system recover?"></textarea>
+<textarea id="recovery-strategy" placeholder="How does the system recover?"></textarea><div class="hint" data-for="recovery-strategy"><span class="tag">Tip</span><ul>
+<li>Health checks + circuit breaker</li>
+<li>Rollback to last-known-good model</li>
+<li>Runbook steps and owners</li></ul></div>
 </div></div></div>
 <!-- Model Evolution -->
 <div class="section-card"><h2 class="section-title"><div class="title-left">Model Evolution</div><span class="pill">accountability</span></h2><div class="section-body"><div class="field-group">
 <label class="field-label">Retraining Triggers</label>
-<textarea id="retraining-triggers" placeholder="What triggers model retraining?"></textarea>
+<textarea id="retraining-triggers" placeholder="What triggers model retraining?"></textarea><div class="hint" data-for="retraining-triggers"><span class="tag">Example</span><ul>
+<li>Drift (e.g., <code>PSI &gt; 0.25</code>)</li>
+<li>Performance drop / override rate increase</li>
+<li>New defect class or process change</li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Versioning Strategy</label>
-<textarea id="versioning-strategy" placeholder="How are versions managed?"></textarea>
+<textarea id="versioning-strategy" placeholder="How are versions managed?"></textarea><div class="hint" data-for="versioning-strategy"><span class="tag">Tip</span><ul>
+<li><code>model_version</code>, <code>preprocessing_version</code>, <code>taxonomy_version</code>, <code>threshold_profile_version</code>, <code>schema_version</code></li></ul></div>
 </div><div class="field-group">
 <label class="field-label">Backward Compatibility</label>
-<textarea id="backward-compatibility" placeholder="Support duration for old versions?"></textarea>
+<textarea id="backward-compatibility" placeholder="Support duration for old versions?"></textarea><div class="hint" data-for="backward-compatibility"><span class="tag">Hint</span><ul>
+<li>Additive changes in minor versions</li>
+<li>Breaking changes require new major + migration guide</li></ul></div>
 </div></div></div>
 </div>
 </div></div></div>
