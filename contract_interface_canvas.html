@@ -1,325 +1,632 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Contract & Interface Canvas</title>
-  <style>
-    :root{
-      --page-bg:#ffffff;
-      --panel-bg:#ffffff;
-      --border:#1f1f1f;
-      --border-thin:#2b2b2b;
-      --header-bg:#e6e6e6;
-      --note-bg:#fff2a8;
-      --note-border:#d3c26a;
-      --text:#111111;
-      --muted:#555555;
-      --radius:0px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract & Interface Canvas (AI-Aware)</title>
+    <style>
 
-    html,body{
-      height:100%;
-      margin:0;
-      background:var(--page-bg);
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+/* =========================================================
+   Worksheet-style Canvas (like provided reference image)
+   Light, print-friendly, sticky-tag headers
+   ========================================================= */
 
-    .page{
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 16px 40px;
-    }
+:root{
+  --ink:#1b1b1b;
+  --muted:#5a5a5a;
+  --paper:#ffffff;
+  --page:#f3f3f3;
+  --header:#e9e9e9;
+  --tag:#fff2a6;           /* sticky-note yellow */
+  --tag-border:#cdbb58;
+  --field:#ffffff;
+  --field-border:#2a2a2a;
+  --soft:#f6f6f6;
+  --danger:#b91c1c;
+  --radius:8px;
+}
 
-    header{
-      display:flex;
-      gap:14px;
-      align-items:flex-end;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      padding-bottom:10px;
-      border-bottom:3px solid var(--border);
-      margin-bottom:14px;
-    }
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--page) !important;
+  color: var(--ink) !important;
+  padding: 18px;
+}
 
-    h1{
-      margin:0;
-      font-size:22px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
+/* container */
+.container{
+  max-width: 1600px;
+  margin: 0 auto;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.10);
+  overflow: hidden;
+}
 
-    .meta{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:4px;
-    }
+/* top header (title + description) */
+.header{
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  padding: 18px 22px 14px 22px !important;
+  border-bottom: 2px solid var(--ink);
+}
+.header h1{
+  margin:0 0 6px 0;
+  font-size: 26px !important;
+  line-height: 1.15;
+}
+.header-subtitle{
+  margin:0 0 6px 0 !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+}
+.header-description{
+  margin:0 !important;
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  max-width: 1100px;
+}
 
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+/* control bar */
+.controls{
+  padding: 10px 14px !important;
+  background: var(--soft) !important;
+  border-bottom: 2px solid var(--ink) !important;
+  display:flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.btn{
+  padding: 7px 10px !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  cursor: pointer;
+  font-weight: 650 !important;
+  font-size: 12px !important;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.btn:hover{ box-shadow: 0 2px 0 rgba(0,0,0,0.08); transform: translateY(-1px); }
+.btn:active{ transform: translateY(0px); }
+.btn-primary{
+  background: var(--ink) !important;
+  color: #fff !important;
+}
+.btn-primary:hover{ box-shadow: 0 3px 0 rgba(0,0,0,0.18); }
+.btn-secondary{ background:#fff !important; }
+.btn-success{ background:#fff !important; }
 
-    button{
-      border:2px solid var(--border);
-      background:var(--page-bg);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:0;
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-      box-shadow:none;
-    }
-    button:hover{ background:#f6f6f6; }
+/* content padding */
+.canvas-content{ padding: 16px !important; }
 
-    .card{
-      margin-top:16px;
-      background:var(--panel-bg);
-      border:2px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:none;
-      overflow:hidden;
-    }
+/* sections */
+.section{
+  border: 2px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 14px !important;
+  margin: 0 0 14px 0 !important;
+  background: var(--paper) !important;
+  box-shadow: none !important;
+}
+.section-header{
+  margin: -14px -14px 12px -14px !important;
+  padding: 8px 10px !important;
+  background: var(--header) !important;
+  border-bottom: 2px solid var(--ink) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+}
+.section-header .left{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding: 3px 8px;
+  background: var(--tag);
+  border: 1.6px solid var(--tag-border);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: lowercase;
+}
 
-    .hd{
-      padding:12px 14px;
-      border-bottom:2px solid var(--border);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background:var(--header-bg);
-    }
+/* fields */
+.field-label{
+  font-weight: 750 !important;
+  font-size: 12px !important;
+  color: var(--ink) !important;
+  margin: 0 0 6px 0 !important;
+  display:block !important;
+}
+textarea, input[type="text"], select{
+  width: 100% !important;
+  border: 1.8px solid var(--field-border) !important;
+  border-radius: 8px !important;
+  padding: 8px 9px !important;
+  font-size: 12px !important;
+  font-family: inherit !important;
+  background: var(--field) !important;
+  color: var(--ink) !important;
+  outline: none;
+  box-shadow: none !important;
+}
+textarea{ min-height: 84px !important; resize: vertical !important; }
+textarea:focus, input[type="text"]:focus, select:focus{
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.10) !important;
+}
 
-    .hd .t{
-      font-weight:900;
-      font-size:14px;
-      color:var(--text);
-      text-transform:uppercase;
-      letter-spacing:.3px;
-    }
+/* cards / grids */
+.term-grid{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+}
+.term-card, .item-card{
+  background: #fff !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  box-shadow:none !important;
+}
+.term-card:hover, .item-card:hover{ box-shadow:none !important; border-color: var(--ink) !important; }
 
-    .bd{
-      padding:12px 14px;
-      background:#ffffff;
-    }
+.add-btn{
+  background: #fff !important;
+  color: var(--ink) !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  cursor:pointer;
+  font-weight: 750 !important;
+  font-size: 12px !important;
+}
+.add-btn:hover{ box-shadow: 0 2px 0 rgba(0,0,0,0.10); transform: translateY(-1px); }
+.remove-btn{
+  background: #fff !important;
+  color: var(--danger) !important;
+  border: 1.8px solid var(--danger) !important;
+  border-radius: 9px !important;
+  padding: 6px 9px !important;
+  cursor:pointer;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+}
 
-    .hint{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:8px;
-      line-height:1.35;
-    }
+/* examples */
+.example-box{
+  background: #fffdf0 !important;
+  border: 1.8px dashed var(--ink) !important;
+  border-left: 6px solid var(--tag-border) !important;
+  padding: 10px 10px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+  color: var(--ink) !important;
+}
 
-    input, textarea, select{
-      width:100%;
-      box-sizing:border-box;
-      border:2px solid var(--border-thin);
-      background:#ffffff;
-      color:var(--text);
-      border-radius:0;
-      padding:10px 10px;
-      font-size:13px;
-      outline:none;
-    }
+/* footer */
+.footer{
+  padding: 12px 16px !important;
+  background: var(--soft) !important;
+  border-top: 2px solid var(--ink) !important;
+  text-align: center !important;
+  color: var(--muted) !important;
+  font-size: 11px !important;
+}
 
-    textarea{
-      min-height:84px;
-      resize:vertical;
-      line-height:1.35;
-    }
+/* helpers */
+.grid-2{ display:grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+p{ line-height: 1.35; }
 
-    /* Sticky-note label */
-    .tag{
-      font-size:12px;
-      font-weight:900;
-      color:#222;
-      border:2px solid var(--note-border);
-      padding:6px 10px;
-      border-radius:0;
-      background:var(--note-bg);
-      white-space:nowrap;
-      text-transform:lowercase;
-    }
+/* Print */
+@media print{
+  body{ background:#fff !important; padding: 0 !important; }
+  .controls{ display:none !important; }
+  .container{ box-shadow:none !important; border-radius: 0 !important; }
+  .section{ page-break-inside: avoid; }
+}
 
-    /* Tables */
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      border:2px solid var(--border);
-      border-radius:0;
-      overflow:hidden;
-    }
-    th,td{
-      border-right:2px solid var(--border);
-      border-bottom:2px solid var(--border);
-      padding:10px;
-      vertical-align:top;
-    }
-    th:last-child, td:last-child{ border-right:0; }
-    tr:last-child td{ border-bottom:0; }
-
-    th{
-      font-size:12px;
-      text-align:left;
-      color:var(--text);
-      background:var(--header-bg);
-      text-transform:uppercase;
-      letter-spacing:.3px;
-      font-weight:900;
-    }
-    td{ background:#ffffff; }
-
-    @media (max-width:980px){
-      table,thead,tbody,tr,th,td{display:block}
-      tr{margin-bottom:12px}
-      th{position:sticky; top:0}
-    }
-
-    @media print{
-      header .toolbar{ display:none; }
-      .page{ padding:0; }
-      button{ display:none; }
-    }
-  </style>
-
-  <style>
-    .grid{
-      margin-top:16px; display:grid; gap:14px;
-      grid-template-columns: 1fr 1fr;
-      grid-template-areas:
-        "id id"
-        "sem sem"
-        "quality fail"
-        "version notes";
-    }
-    .id{grid-area:id}
-    .sem{grid-area:sem}
-    .quality{grid-area:quality}
-    .fail{grid-area:fail}
-    .version{grid-area:version}
-    .notes{grid-area:notes}
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr; grid-template-areas:
-        "id" "sem" "quality" "fail" "version" "notes";
-      }
-    }
-  </style>
-
+</style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div>
-        <h1>Contract & Interface Canvas</h1>
-        <div class="meta">Define contracts between Domain ↔ AI ↔ OT/IT with semantics, quality, failure, and versioning.</div>
-      </div>
-      <div class="toolbar">
-        <button onclick="window.print()">Print / Save PDF</button>
-        <button onclick="document.querySelectorAll('textarea,input').forEach(e=>e.value='')">Clear</button>
-      </div>
-    </header>
-
-    <div class="grid">
-      <section class="card id">
-        <div class="hd"><div class="t">Interface Identity</div><span class="tag">Producer → Consumer</span></div>
-        <div class="bd">
-          <div class="row three">
-            <div>
-              <div class="hint">Producer (system/team/context)</div>
-              <input placeholder="e.g., Vision Edge Node" />
+    <div class="container">
+        <div class="header">
+            <h1>📜 Contract & Interface Canvas (AI-Aware)</h1>
+            <p class="header-subtitle">Make integrations safe under uncertainty and change</p>
+            <p class="header-description">
+                Defines semantic contracts, failure modes, fallbacks, and versioning rules to ensure AI evolution 
+                never silently breaks production behavior. Extends traditional API contracts to handle probabilistic 
+                outputs and model evolution.
+            </p>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="saveCanvas()">💾 Save</button>
+            <button class="btn btn-secondary" onclick="loadCanvas()">📂 Load</button>
+            <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear</button>
+            <button class="btn btn-success" onclick="exportCanvas()">📥 Export</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
+        </div>
+        
+        <div class="canvas-content">
+            <!-- Service Identity -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🎯</span> Service Identity</div><span class="tag">identity</span></div>
+                <div style="margin-bottom: 15px;">
+                    <label class="field-label">Service Name:</label>
+                    <input type="text" id="service-name" placeholder="e.g., DefectDetectionService">
+                </div>
+                <div>
+                    <label class="field-label">Purpose & Capability:</label>
+                    <textarea id="service-purpose"></textarea>
+                </div>
             </div>
-            <div>
-              <div class="hint">Consumer (system/team/context)</div>
-              <input placeholder="e.g., Quality Management System" />
+            
+            <!-- Input Contract -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📥</span> Input Contract</div><span class="tag">inputs</span></div>
+                <div id="inputs-container"></div>
+                <button class="add-btn" onclick="addInput()">+ Add Input Parameter</button>
+                <div class="example-box">
+                    <strong>Example:</strong> image (RGBImage, 2048x2048), part_id (string), metadata (JSON)
+                </div>
             </div>
-            <div>
-              <div class="hint">Contract type</div>
-              <select>
-                <option>Event</option>
-                <option>API (sync)</option>
-                <option>Stream</option>
-                <option>Batch</option>
-                <option>File drop</option>
-              </select>
+            
+            <!-- Output Contract -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📤</span> Output Contract</div><span class="tag">outputs</span></div>
+                <div id="outputs-container"></div>
+                <button class="add-btn" onclick="addOutput()">+ Add Output Parameter</button>
+                <div class="example-box">
+                    <strong>Example:</strong> defect_detected (boolean), confidence (float 0-1), defect_type (enum), model_version (string)
+                </div>
             </div>
-          </div>
-          <div style="height:10px"></div>
-          <div class="row two">
-            <div>
-              <div class="hint">Interface name</div>
-              <input placeholder="e.g., DefectDetected v1" />
+            
+            <!-- Behavioral Contract -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚡</span> Behavioral Contract</div><span class="tag">behavior</span></div>
+                <p style="color: #6c757d; margin-bottom: 20px;">Not just data contracts - behavioral guarantees based on confidence and context</p>
+                <div id="behavioral-rules-container"></div>
+                <button class="add-btn" onclick="addBehavioralRule()">+ Add Behavioral Rule</button>
+                <div class="example-box">
+                    <strong>Example:</strong> confidence >= 0.90 → Accuracy guarantee: <2% error rate | latency: p95 < 200ms
+                </div>
             </div>
-            <div>
-              <div class="hint">Direction</div>
-              <input placeholder="e.g., Edge → MES" />
+            
+            <!-- Failure Modes -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span> Failure Modes & Handling</div><span class="tag">resilience</span></div>
+                <div id="failure-modes-container"></div>
+                <button class="add-btn" onclick="addFailureMode()">+ Add Failure Mode</button>
+                <div class="example-box">
+                    <strong>Example:</strong> Service unavailable (503) → Consumer falls back to manual process | Alert operations team
+                </div>
             </div>
-          </div>
+            
+            <!-- Versioning & Evolution -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span> Versioning & Evolution</div><span class="tag">evolution</span></div>
+                <div class="grid-2">
+                    <div>
+                        <label class="field-label">Model Versioning Strategy:</label>
+                        <textarea id="model-versioning"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">API Versioning Strategy:</label>
+                        <textarea id="api-versioning"></textarea>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Backward Compatibility Rules:</label>
+                    <textarea id="backward-compat"></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Breaking Change Process:</label>
+                    <textarea id="breaking-changes"></textarea>
+                </div>
+                <div class="example-box">
+                    <strong>Model Versioning:</strong> semantic versioning (major.minor.patch) - major = breaking behavioral change
+                    <br><strong>Deployment:</strong> Blue-green with canary (5% → 25% → 100% over 7 days)
+                </div>
+            </div>
+            
+            <!-- Quality Guarantees -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">✅</span> Quality Guarantees</div><span class="tag">sla</span></div>
+                <div class="grid-2">
+                    <div>
+                        <label class="field-label">Performance SLAs:</label>
+                        <textarea id="performance-slas"></textarea>
+                    </div>
+                    <div>
+                        <label class="field-label">Accuracy Guarantees:</label>
+                        <textarea id="accuracy-guarantees"></textarea>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Monitoring & Observability:</label>
+                    <textarea id="monitoring"></textarea>
+                </div>
+            </div>
         </div>
-      </section>
-
-      <section class="card sem">
-        <div class="hd"><div class="t">Semantic Contract</div><span class="tag">Meaning-first</span></div>
-        <div class="bd row">
-          <div class="hint">Domain meaning: what does the message/API *mean* in business terms?</div>
-          <textarea placeholder="Describe the intent and domain semantics."></textarea>
-
-          <div class="hint">Field semantics: units, reference frames, time meaning, taxonomy versions.</div>
-          <textarea placeholder="List critical fields and their meanings (including units + coordinate frames)."></textarea>
-
-          <div class="hint">Domain invariants: rules that must always hold.</div>
-          <textarea placeholder="E.g., position reference must match calibration version; severity scale must match policy version."></textarea>
+        
+        <div class="footer">
+            <p><strong>Contract & Interface Canvas (AI-Aware)</strong> | DDD Strategic Design for AI Systems</p>
+            <p>Ensures safe integration under model evolution and uncertainty</p>
         </div>
-      </section>
-
-      <section class="card quality">
-        <div class="hd"><div class="t">Quality & Operational Guarantees</div><span class="tag">SLO-ish</span></div>
-        <div class="bd row">
-          <div class="hint">Freshness / latency / completeness / ordering expectations.</div>
-          <textarea placeholder="Define what 'good enough' means operationally."></textarea>
-
-          <div class="hint">Validation: how the consumer detects contract violations.</div>
-          <textarea placeholder="Schema checks, semantic checks, golden samples, canaries."></textarea>
-        </div>
-      </section>
-
-      <section class="card fail">
-        <div class="hd"><div class="t">Failure Semantics</div><span class="tag">Safe degradation</span></div>
-        <div class="bd row">
-          <div class="hint">How can this interface fail? (missing data, stale data, wrong meaning, partial delivery)</div>
-          <textarea placeholder="Enumerate failure modes."></textarea>
-
-          <div class="hint">Fallback behavior: what happens when it fails?</div>
-          <textarea placeholder="Retries, safe mode, human review, ignore, default decision, rollback."></textarea>
-
-          <div class="hint">Alerting: who is notified and when?</div>
-          <textarea placeholder="Ops on-call, domain owner, ML owner; thresholds and escalation."></textarea>
-        </div>
-      </section>
-
-      <section class="card version">
-        <div class="hd"><div class="t">Versioning & Change Rules</div><span class="tag">Evolution</span></div>
-        <div class="bd row">
-          <div class="hint">Versioning scheme and compatibility rules.</div>
-          <textarea placeholder="E.g., semantic versioning; deprecation windows; consumer-driven contracts."></textarea>
-
-          <div class="hint">Change triggers: what domain/tech changes require updating this contract?</div>
-          <textarea placeholder="New taxonomy, new sensor, new policy, new upstream context." ></textarea>
-        </div>
-      </section>
-
-      <section class="card notes">
-        <div class="hd"><div class="t">Notes & Decisions</div><span class="tag">Traceability</span></div>
-        <div class="bd row">
-          <div class="hint">Key decisions made, trade-offs, open questions.</div>
-          <textarea placeholder="Capture rationale and unresolved items."></textarea>
-        </div>
-      </section>
     </div>
-  </div>
+    
+    <script>
+        function getInputTemplate(index, data = {}) {
+            return `
+                <div class="item-card" data-index="${index}">
+                    <label class="field-label">Parameter Name:</label>
+                    <input type="text" class="param-name" value="${data.name || ''}" placeholder="e.g., image">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label class="field-label">Type:</label>
+                            <input type="text" class="param-type" value="${data.type || ''}" placeholder="e.g., RGBImage">
+                        </div>
+                        <div>
+                            <label class="field-label">Required:</label>
+                            <select class="param-required" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px;">
+                                <option value="yes" ${data.required === 'yes' ? 'selected' : ''}>Yes</option>
+                                <option value="no" ${data.required === 'no' ? 'selected' : ''}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label class="field-label" style="margin-top: 10px;">Validation Rules:</label>
+                    <textarea class="param-validation" style="min-height: 50px;">${data.validation || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getOutputTemplate(index, data = {}) {
+            return `
+                <div class="item-card" data-index="${index}">
+                    <label class="field-label">Parameter Name:</label>
+                    <input type="text" class="output-name" value="${data.name || ''}" placeholder="e.g., confidence">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label class="field-label">Type:</label>
+                            <input type="text" class="output-type" value="${data.type || ''}" placeholder="e.g., float">
+                        </div>
+                        <div>
+                            <label class="field-label">Range/Values:</label>
+                            <input type="text" class="output-range" value="${data.range || ''}" placeholder="e.g., 0.0-1.0">
+                        </div>
+                    </div>
+                    <label class="field-label" style="margin-top: 10px;">Semantic Meaning:</label>
+                    <textarea class="output-meaning" style="min-height: 50px;">${data.meaning || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getBehavioralRuleTemplate(index, data = {}) {
+            return `
+                <div class="item-card" data-index="${index}">
+                    <label class="field-label">Condition:</label>
+                    <input type="text" class="rule-condition" value="${data.condition || ''}" placeholder="e.g., confidence >= 0.90">
+                    <label class="field-label" style="margin-top: 10px;">Behavioral Guarantee:</label>
+                    <textarea class="rule-guarantee" style="min-height: 50px;">${data.guarantee || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getFailureModeTemplate(index, data = {}) {
+            return `
+                <div class="item-card" data-index="${index}">
+                    <label class="field-label">Failure Scenario:</label>
+                    <input type="text" class="failure-scenario" value="${data.scenario || ''}" placeholder="e.g., Service unavailable">
+                    <label class="field-label" style="margin-top: 10px;">Consumer Handling:</label>
+                    <textarea class="failure-handling" style="min-height: 50px;">${data.handling || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function addInput() {
+            document.getElementById('inputs-container').insertAdjacentHTML('beforeend', 
+                getInputTemplate(document.getElementById('inputs-container').children.length));
+            autoSave();
+        }
+        
+        function addOutput() {
+            document.getElementById('outputs-container').insertAdjacentHTML('beforeend', 
+                getOutputTemplate(document.getElementById('outputs-container').children.length));
+            autoSave();
+        }
+        
+        function addBehavioralRule() {
+            document.getElementById('behavioral-rules-container').insertAdjacentHTML('beforeend', 
+                getBehavioralRuleTemplate(document.getElementById('behavioral-rules-container').children.length));
+            autoSave();
+        }
+        
+        function addFailureMode() {
+            document.getElementById('failure-modes-container').insertAdjacentHTML('beforeend', 
+                getFailureModeTemplate(document.getElementById('failure-modes-container').children.length));
+            autoSave();
+        }
+        
+        function removeItem(btn) {
+            if (confirm('Remove?')) {
+                btn.closest('.item-card').remove();
+                autoSave();
+            }
+        }
+        
+        function collectCanvasData() {
+            const data = {
+                service: {
+                    name: document.getElementById('service-name').value,
+                    purpose: document.getElementById('service-purpose').value
+                },
+                inputs: [],
+                outputs: [],
+                behavioral: [],
+                failureModes: [],
+                versioning: {
+                    model: document.getElementById('model-versioning').value,
+                    api: document.getElementById('api-versioning').value,
+                    backwardCompat: document.getElementById('backward-compat').value,
+                    breakingChanges: document.getElementById('breaking-changes').value
+                },
+                quality: {
+                    performanceSlas: document.getElementById('performance-slas').value,
+                    accuracyGuarantees: document.getElementById('accuracy-guarantees').value,
+                    monitoring: document.getElementById('monitoring').value
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            document.querySelectorAll('#inputs-container .item-card').forEach(card => {
+                data.inputs.push({
+                    name: card.querySelector('.param-name').value,
+                    type: card.querySelector('.param-type').value,
+                    required: card.querySelector('.param-required').value,
+                    validation: card.querySelector('.param-validation').value
+                });
+            });
+            
+            document.querySelectorAll('#outputs-container .item-card').forEach(card => {
+                data.outputs.push({
+                    name: card.querySelector('.output-name').value,
+                    type: card.querySelector('.output-type').value,
+                    range: card.querySelector('.output-range').value,
+                    meaning: card.querySelector('.output-meaning').value
+                });
+            });
+            
+            document.querySelectorAll('#behavioral-rules-container .item-card').forEach(card => {
+                data.behavioral.push({
+                    condition: card.querySelector('.rule-condition').value,
+                    guarantee: card.querySelector('.rule-guarantee').value
+                });
+            });
+            
+            document.querySelectorAll('#failure-modes-container .item-card').forEach(card => {
+                data.failureModes.push({
+                    scenario: card.querySelector('.failure-scenario').value,
+                    handling: card.querySelector('.failure-handling').value
+                });
+            });
+            
+            return data;
+        }
+        
+        function autoSave() {
+            localStorage.setItem('contract_interface_canvas', JSON.stringify(collectCanvasData()));
+        }
+        
+        function saveCanvas() {
+            const data = collectCanvasData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            const serviceName = document.getElementById('service-name').value.replace(/\s+/g, '_') || 'service';
+            link.download = `contract_interface_${serviceName}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            alert('Saved!');
+        }
+        
+        function loadCanvas() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        loadCanvasData(JSON.parse(event.target.result));
+                        alert('Loaded!');
+                    } catch (error) {
+                        alert('Error loading');
+                    }
+                };
+                reader.readAsText(e.target.files[0]);
+            };
+            input.click();
+        }
+        
+        function loadCanvasData(data) {
+            document.getElementById('service-name').value = data.service?.name || '';
+            document.getElementById('service-purpose').value = data.service?.purpose || '';
+            document.getElementById('model-versioning').value = data.versioning?.model || '';
+            document.getElementById('api-versioning').value = data.versioning?.api || '';
+            document.getElementById('backward-compat').value = data.versioning?.backwardCompat || '';
+            document.getElementById('breaking-changes').value = data.versioning?.breakingChanges || '';
+            document.getElementById('performance-slas').value = data.quality?.performanceSlas || '';
+            document.getElementById('accuracy-guarantees').value = data.quality?.accuracyGuarantees || '';
+            document.getElementById('monitoring').value = data.quality?.monitoring || '';
+            
+            document.getElementById('inputs-container').innerHTML = '';
+            data.inputs?.forEach((inp, i) => {
+                document.getElementById('inputs-container').insertAdjacentHTML('beforeend', getInputTemplate(i, inp));
+            });
+            
+            document.getElementById('outputs-container').innerHTML = '';
+            data.outputs?.forEach((out, i) => {
+                document.getElementById('outputs-container').insertAdjacentHTML('beforeend', getOutputTemplate(i, out));
+            });
+            
+            document.getElementById('behavioral-rules-container').innerHTML = '';
+            data.behavioral?.forEach((rule, i) => {
+                document.getElementById('behavioral-rules-container').insertAdjacentHTML('beforeend', getBehavioralRuleTemplate(i, rule));
+            });
+            
+            document.getElementById('failure-modes-container').innerHTML = '';
+            data.failureModes?.forEach((mode, i) => {
+                document.getElementById('failure-modes-container').insertAdjacentHTML('beforeend', getFailureModeTemplate(i, mode));
+            });
+        }
+        
+        function clearCanvas() {
+            if (confirm('Clear all?')) {
+                document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+                document.querySelectorAll('#inputs-container, #outputs-container, #behavioral-rules-container, #failure-modes-container').forEach(el => el.innerHTML = '');
+                localStorage.removeItem('contract_interface_canvas');
+            }
+        }
+        
+        function exportCanvas() { saveCanvas(); }
+        
+        document.addEventListener('input', autoSave);
+        document.addEventListener('change', autoSave);
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('contract_interface_canvas');
+            if (saved) {
+                try {
+                    loadCanvasData(JSON.parse(saved));
+                } catch (error) {
+                    console.error('Load error');
+                }
+            } else {
+                addInput();
+                addOutput();
+                addBehavioralRule();
+                addFailureMode();
+            }
+        });
+    </script>
 </body>
 </html>

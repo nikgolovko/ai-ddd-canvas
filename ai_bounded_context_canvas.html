@@ -1,293 +1,705 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Bounded Context Canvas</title>
-  <style>
-    :root{
-      --page-bg:#ffffff;
-      --panel-bg:#ffffff;
-      --border:#1f1f1f;
-      --border-thin:#2b2b2b;
-      --header-bg:#e6e6e6;
-      --note-bg:#fff2a8;
-      --note-border:#d3c26a;
-      --text:#111111;
-      --muted:#555555;
-      --radius:0px;
-    }
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Bounded Context Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+/* =========================================================
+   AI Bounded Context Canvas — "worksheet" style (like image)
+   Light, print-friendly, Miro-like sticky tags
+   ========================================================= */
 
-    html,body{
-      height:100%;
-      margin:0;
-      background:var(--page-bg);
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+:root{
+  --ink:#1b1b1b;
+  --muted:#5a5a5a;
+  --paper:#ffffff;
+  --page:#f3f3f3;
+  --header:#e9e9e9;
+  --tag:#fff2a6;           /* sticky-note yellow */
+  --tag-border:#cdbb58;
+  --field:#ffffff;
+  --field-border:#2a2a2a;
+  --btn:#ffffff;
+  --btn-border:#2a2a2a;
+  --btn-hover:#f2f2f2;
+  --radius:2px;
+}
 
-    .page{
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 16px 40px;
-    }
+*{ margin:0; padding:0; box-sizing:border-box; }
 
-    header{
-      display:flex;
-      gap:14px;
-      align-items:flex-end;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      padding-bottom:10px;
-      border-bottom:3px solid var(--border);
-      margin-bottom:14px;
-    }
+body{
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-    h1{
-      margin:0;
-      font-size:22px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
+/* ===== Top header ===== */
+.canvas-header{
+  background: var(--page);
+  border-bottom: 2px solid var(--ink);
+  padding: 18px 22px 10px 22px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: none;
+}
 
-    .meta{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:4px;
-    }
+.canvas-title-group{
+  max-width: 1200px;
+  margin: 0 auto;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 16px;
+}
 
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+.canvas-title{
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
 
-    button{
-      border:2px solid var(--border);
-      background:var(--page-bg);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:0;
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-    }
-    button:hover{ background:#f6f6f6; }
+.canvas-subtitle{
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+}
 
-    .card{
-      background:var(--panel-bg);
-      border:2px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:none;
-      overflow:hidden;
-    }
+/* Toolbar becomes "top-right buttons" */
+.toolbar{
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  position: static;
+}
 
-    .card .hd{
-      padding:12px 14px;
-      border-bottom:2px solid var(--border);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background:var(--header-bg);
-    }
+.btn{
+  padding: 6px 10px;
+  border: 2px solid var(--btn-border);
+  border-radius: var(--radius);
+  background: var(--btn);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: background .12s ease;
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
 
-    .card .hd .t{
-      font-weight:900;
-      font-size:14px;
-      color:var(--text);
-      text-transform:uppercase;
-      letter-spacing:.3px;
-    }
+.btn:hover{ background: var(--btn-hover); }
+.btn:active{ transform: translateY(1px); }
 
-    .card .bd{
-      padding:12px 14px;
-      background:#ffffff;
-    }
+.btn-primary{
+  background: var(--btn);
+  color: var(--ink);
+  border-color: var(--btn-border);
+}
 
-    .hint{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:8px;
-      line-height:1.35;
-    }
+/* ===== Workspace as a "sheet" ===== */
+.canvas-workspace{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 22px 28px 22px;
+}
 
-    input, textarea, select{
-      width:100%;
-      box-sizing:border-box;
-      border:2px solid var(--border-thin);
-      background:#ffffff;
-      color:var(--text);
-      border-radius:0;
-      padding:10px 10px;
-      font-size:13px;
-      outline:none;
-    }
+.sheet{
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
 
-    textarea{
-      min-height:110px;
-      resize:vertical;
-      line-height:1.35;
-    }
+/* Keep responsiveness, but reduce gap like worksheet */
+.canvas-grid{
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  margin: 0;
+}
 
-    .row{ display:grid; gap:10px; }
-    .row.two{ grid-template-columns:1fr 1fr; }
-    .row.three{ grid-template-columns:1fr 1fr 1fr; }
+/* ===== Sections ===== */
+.section-card{
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  transition: none;
+}
+.section-card:hover{ box-shadow:none; }
 
-    /* Sticky-note labels */
-    .tag{
-      font-size:12px;
-      font-weight:900;
-      color:#222;
-      border:2px solid var(--note-border);
-      padding:6px 10px;
-      border-radius:0;
-      background:var(--note-bg);
-      white-space:nowrap;
-      text-transform:lowercase;
-    }
+.section-title{
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--header);
+  border-bottom: 2px solid var(--ink);
+  padding: 8px 10px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+}
 
-    @media (max-width:980px){
-      .row.two,.row.three{ grid-template-columns:1fr; }
-    }
+.section-emoji{ display:none; } /* match worksheet look */
 
-    @media print{
-      header .toolbar{ display:none; }
-      .page{ padding:0; }
-    }
-  </style>
+.section-title .title-left{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
 
-  <style>
-    .grid{
-      margin-top:16px; display:grid; gap:14px;
-      grid-template-columns: 1.2fr 1fr 1fr;
-      grid-template-areas:
-        "purpose purpose purpose"
-        "scope actors ownership"
-        "upstream downstream risks";
-    }
-    .small textarea{min-height:92px}
-    .purpose{grid-area:purpose}
-    .scope{grid-area:scope}
-    .actors{grid-area:actors}
-    .ownership{grid-area:ownership}
-    .upstream{grid-area:upstream}
-    .downstream{grid-area:downstream}
-    .risks{grid-area:risks}
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr; grid-template-areas:
-        "purpose" "scope" "actors" "ownership" "upstream" "downstream" "risks";
-      }
-    }
-  </style>
+.pill{
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--tag);
+  border: 1.5px solid var(--tag-border);
+  padding: 3px 8px;
+  border-radius: 3px;
+  color: var(--ink);
+  white-space: nowrap;
+}
 
+.section-body{
+  padding: 10px;
+}
+
+/* ===== Fields ===== */
+.field-group{ margin: 0 0 10px 0; }
+.field-group:last-child{ margin-bottom: 0; }
+
+.field-label{
+  display:block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink);
+  margin: 0 0 6px 0;
+}
+
+.field-sublabel{
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 6px 0;
+  line-height: 1.35;
+}
+
+input[type="text"], textarea, select{
+  width:100%;
+  padding: 8px 9px;
+  border: 1.8px solid var(--field-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  background: var(--field);
+  color: var(--ink);
+}
+
+textarea{ min-height: 84px; resize: vertical; }
+input[type="text"]:focus, textarea:focus, select:focus{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.12);
+}
+
+.help-text{
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* examples become subtle (still useful) */
+.example-card{
+  background: #f6f6f6;
+  border: 1.5px solid var(--field-border);
+  border-radius: var(--radius);
+  padding: 8px 9px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.example-card strong{ color: var(--ink); }
+
+/* ===== Rules list blocks ===== */
+.rule-card{
+  background: #fff;
+  border: 1.8px solid var(--field-border);
+  border-radius: var(--radius);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.rule-card:hover{ background:#fff; border-color: var(--field-border); }
+
+.add-btn{
+  background: #fff;
+  border: 2px dashed var(--field-border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink);
+  transition: background .12s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.add-btn:hover{ background: #f3f3f3; }
+
+.remove-btn{
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--field-border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: 10px;
+}
+.remove-btn:hover{ background: #f3f3f3; }
+
+/* Remove previous gradient highlight themes */
+.section-card.highlight-purple,
+.section-card.highlight-blue,
+.section-card.highlight-yellow{
+  background: var(--paper);
+  border-color: var(--ink);
+}
+
+/* Grid helpers */
+.grid-2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Responsive */
+@media (max-width: 1100px){
+  .canvas-grid{ grid-template-columns: 1fr; }
+  .toolbar{ justify-content:flex-start; }
+}
+
+/* Print */
+@media print{
+  body{ background:#fff; }
+  .canvas-header{ position: static; border-bottom: 2px solid #000; }
+  .btn{ display:none; }
+  .sheet{ box-shadow:none; }
+  .section-card{ page-break-inside: avoid; }
+}
+</style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div>
-        <h1>AI Bounded Context Canvas</h1>
-        <div class="meta">Define boundary, responsibilities, and ownership for an AI-enabled context.</div>
-      </div>
-      <div class="toolbar">
-        <button onclick="window.print()">Print / Save PDF</button>
-        <button onclick="document.querySelectorAll('textarea,input').forEach(e=>e.value='')">Clear</button>
-      </div>
-    </header>
+<div class="canvas-header">
+<div class="canvas-title-group">
+<h1 class="canvas-title">🎯 AI Bounded Context Canvas</h1>
+<p class="canvas-subtitle">Define where AI belongs and what it owns. Clarifies responsibilities, degradation patterns, and evolution strategy.</p>
+<div class="toolbar">
+<button class="btn btn-primary" onclick="saveCanvas()">
+<span>💾</span> Save Canvas
+        </button>
+<button class="btn" onclick="loadCanvas()">
+<span>📂</span> Load
+        </button>
+<button class="btn" onclick="exportCanvas()">
+<span>📥</span> Export JSON
+        </button>
+<button class="btn" onclick="window.print()"><span>🖨️</span> Print / Save PDF</button>
+<button class="btn" onclick="clearCanvas()">
+<span>🗑️</span> Clear All
+        </button>
+</div></div>
+</div>
 
-    <div class="grid">
-      <section class="card purpose">
-        <div class="hd"><div class="t">Context Name & Purpose</div><span class="tag">Boundary-first</span></div>
-        <div class="bd">
-          <div class="row two">
-            <div>
-              <div class="hint">Bounded Context name (domain term).</div>
-              <input placeholder="e.g., Surface Quality Inspection" />
-            </div>
-            <div>
-              <div class="hint">Context owner (team / role).</div>
-              <input placeholder="e.g., Quality Engineering" />
-            </div>
-          </div>
-          <div style="height:10px"></div>
-          <div class="hint">Purpose: what domain outcome does this context exist to achieve?</div>
-          <textarea placeholder="Describe the domain goal in plain language."></textarea>
-        </div>
-      </section>
+<div class="canvas-workspace">
 
-      <section class="card scope">
-        <div class="hd"><div class="t">In-Scope / Out-of-Scope Responsibilities</div><span class="tag">Clarity</span></div>
-        <div class="bd row two small">
-          <div>
-            <div class="hint">In-scope (what this context owns).</div>
-            <textarea placeholder="Responsibilities this context controls end-to-end."></textarea>
-          </div>
-          <div>
-            <div class="hint">Out-of-scope (explicit exclusions).</div>
-            <textarea placeholder="Responsibilities owned elsewhere / not addressed."></textarea>
-          </div>
-        </div>
-      </section>
-
-      <section class="card actors">
-        <div class="hd"><div class="t">Actors & System Touchpoints</div><span class="tag">Who interacts</span></div>
-        <div class="bd row">
-          <div class="hint">Key actors: Domain experts, operators, engineers, external systems.</div>
-          <textarea placeholder="List people/roles and systems that interact with this context."></textarea>
-          <div class="hint">Primary inputs & outputs (domain level, not features).</div>
-          <textarea placeholder="Inputs: domain concepts consumed. Outputs: domain decisions/events produced."></textarea>
-        </div>
-      </section>
-
-      <section class="card ownership">
-        <div class="hd"><div class="t">Ownership (RACI-lite)</div><span class="tag">Accountability</span></div>
-        <div class="bd row two">
-          <div>
-            <div class="hint">Domain ownership (policy/meaning).</div>
-            <textarea placeholder="Who decides definitions, tolerances, acceptance criteria?"></textarea>
-          </div>
-          <div>
-            <div class="hint">Technical ownership (OT/IT ops, integration).</div>
-            <textarea placeholder="Who owns signals, deployment, runtime constraints, reliability?"></textarea>
-          </div>
-        </div>
-        <div style="height:10px"></div>
-        <div class="row two">
-          <div>
-            <div class="hint">ML ownership (model behavior & monitoring).</div>
-            <textarea placeholder="Who owns training, evaluation, thresholds, drift monitoring?"></textarea>
-          </div>
-          <div>
-            <div class="hint">Escalation path (when something goes wrong).</div>
-            <textarea placeholder="Who gets paged / consulted / approves rollback?"></textarea>
-          </div>
-        </div>
-      </section>
-
-      <section class="card upstream">
-        <div class="hd"><div class="t">Upstream Contexts</div><span class="tag">Dependencies</span></div>
-        <div class="bd row">
-          <div class="hint">What contexts provide inputs? What do you assume about them?</div>
-          <textarea placeholder="Upstream contexts + their published language and assumptions."></textarea>
-        </div>
-      </section>
-
-      <section class="card downstream">
-        <div class="hd"><div class="t">Downstream Contexts</div><span class="tag">Consumers</span></div>
-        <div class="bd row">
-          <div class="hint">Who consumes your outputs? What do they rely on?</div>
-          <textarea placeholder="Downstream contexts + what they need to trust."></textarea>
-        </div>
-      </section>
-
-      <section class="card risks">
-        <div class="hd"><div class="t">Boundary Risks & Known Frictions</div><span class="tag">Reality check</span></div>
-        <div class="bd row">
-          <div class="hint">Where do misunderstandings happen today? (language, handoffs, ownership, latency)</div>
-          <textarea placeholder="List recurring friction points and how to mitigate them."></textarea>
-        </div>
-      </section>
-    </div>
-  </div>
+<div class="sheet"><div class="canvas-grid">
+<!-- Left Column -->
+<div style="display: flex; flex-direction: column; gap: 24px;">
+<!-- Context Identity -->
+<div class="section-card"><h2 class="section-title"><div class="title-left">Context Identity</div><span class="pill">boundary-first</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Context Name</label>
+<input id="context-name" placeholder="e.g., Defect Detection, Demand Forecasting" type="text"/>
+</div><div class="field-group">
+<label class="field-label">Purpose</label>
+<textarea id="context-purpose" placeholder="What business capability does this AI-powered context provide?"></textarea>
+</div><div class="field-group">
+<label class="field-label">Domain Language</label>
+<textarea id="domain-language" placeholder="Key domain terms used within this context"></textarea>
+</div></div></div>
+<!-- AI Responsibilities -->
+<div class="section-card highlight-purple"><h2 class="section-title"><div class="title-left">AI Responsibilities</div><span class="pill">clarity</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">What AI Owns</label>
+<textarea id="ai-owns" placeholder="Decisions and processes that the AI model is responsible for"></textarea>
+</div><div class="field-group">
+<label class="field-label">What AI Does NOT Own</label>
+<textarea id="ai-not-owns" placeholder="Decisions explicitly outside AI's responsibility"></textarea>
+</div><div class="field-group">
+<label class="field-label">Model Type</label>
+<input id="model-type" placeholder="e.g., CNN (ResNet50), YOLO v8" type="text"/>
+<div class="help-text">High-level architecture for context understanding</div>
+</div></div></div>
+<!-- Degradation Rules -->
+<div class="section-card"><h2 class="section-title"><div class="title-left">Degradation &amp; Escalation</div><span class="pill">accountability</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Confidence Thresholds</label>
+<div id="confidence-thresholds-container"></div>
+<button class="add-btn" onclick="addConfidenceThreshold()">
+                            + Add Threshold Rule
+                        </button>
+</div><div class="field-group">
+<label class="field-label">Escalation Triggers</label>
+<div class="field-sublabel">When should AI hand off to human or fallback?</div>
+<div id="escalation-triggers-container"></div>
+<button class="add-btn" onclick="addEscalationTrigger()">
+                            + Add Escalation
+                        </button>
+</div><div class="field-group">
+<label class="field-label">Stop Automation</label>
+<div class="field-sublabel">When should AI be completely disabled?</div>
+<div id="stop-conditions-container"></div>
+<button class="add-btn" onclick="addStopCondition()">
+                            + Add Stop Condition
+                        </button>
+</div></div></div>
+<!-- Communication -->
+<div class="section-card"><h2 class="section-title"><div class="title-left">Inbound &amp; Outbound</div><span class="pill">who interacts</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Inbound</label>
+<textarea id="inbound" placeholder="Commands, events, queries coming IN"></textarea>
+<div class="example-card">
+<strong>Example:</strong> AnalyzeImageCommand, RetrainModelEvent, GetModelMetricsQuery
+                        </div>
+</div><div class="field-group">
+<label class="field-label">Outbound</label>
+<textarea id="outbound" placeholder="Domain events, responses going OUT"></textarea>
+<div class="example-card">
+<strong>Example:</strong> DefectDetectedEvent, ConfidenceDegradedEvent, AnalysisCompletedResponse
+                        </div>
+</div></div></div>
+</div>
+<!-- Right Column -->
+<div style="display: flex; flex-direction: column; gap: 24px;">
+<!-- Strategic Classification -->
+<div class="section-card highlight-yellow"><h2 class="section-title"><div class="title-left">Strategic Classification</div><span class="pill">boundary-first</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Domain Type</label>
+<select id="domain-type">
+<option value="">Select...</option>
+<option value="core">Core Domain</option>
+<option value="supporting">Supporting</option>
+<option value="generic">Generic</option>
+</select>
+</div><div class="field-group">
+<label class="field-label">Evolution Strategy</label>
+<select id="evolution-strategy">
+<option value="">Select...</option>
+<option value="custom">Custom-built</option>
+<option value="product">Product/Service</option>
+<option value="commodity">Commodity</option>
+</select>
+</div><div class="field-group">
+<label class="field-label">Business Criticality</label>
+<select id="business-criticality">
+<option value="">Select...</option>
+<option value="high">High</option>
+<option value="medium">Medium</option>
+<option value="low">Low</option>
+</select>
+</div></div></div>
+<!-- Dependencies -->
+<div class="section-card"><h2 class="section-title"><div class="title-left">Dependencies</div><span class="pill">dependencies</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Upstream Contexts</label>
+<textarea id="upstream" placeholder="What contexts does this depend on?"></textarea>
+</div><div class="field-group">
+<label class="field-label">Downstream Contexts</label>
+<textarea id="downstream" placeholder="What contexts depend on this?"></textarea>
+</div></div></div>
+<!-- Fallback -->
+<div class="section-card highlight-blue"><h2 class="section-title"><div class="title-left">Fallback Mechanisms</div><span class="pill">reality check</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Primary Fallback</label>
+<textarea id="primary-fallback" placeholder="What happens when AI fails or degrades?"></textarea>
+</div><div class="field-group">
+<label class="field-label">Recovery Strategy</label>
+<textarea id="recovery-strategy" placeholder="How does the system recover?"></textarea>
+</div></div></div>
+<!-- Model Evolution -->
+<div class="section-card"><h2 class="section-title"><div class="title-left">Model Evolution</div><span class="pill">accountability</span></h2><div class="section-body"><div class="field-group">
+<label class="field-label">Retraining Triggers</label>
+<textarea id="retraining-triggers" placeholder="What triggers model retraining?"></textarea>
+</div><div class="field-group">
+<label class="field-label">Versioning Strategy</label>
+<textarea id="versioning-strategy" placeholder="How are versions managed?"></textarea>
+</div><div class="field-group">
+<label class="field-label">Backward Compatibility</label>
+<textarea id="backward-compatibility" placeholder="Support duration for old versions?"></textarea>
+</div></div></div>
+</div>
+</div></div></div>
+<script>
+        function getConfidenceThresholdTemplate(index, data = {}) {
+            return `
+                <div class="rule-card" data-index="${index}">
+                    <div class="grid-2" style="margin-bottom: 12px;">
+                        <div>
+                            <label class="field-label">Confidence Range</label>
+                            <input type="text" class="conf-range" value="${data.range || ''}" placeholder="e.g., >= 0.90">
+                        </div>
+                        <div>
+                            <label class="field-label">Action</label>
+                            <input type="text" class="conf-action" value="${data.action || ''}" placeholder="e.g., Automate">
+                        </div>
+                    </div>
+                    <label class="field-label">Business Impact</label>
+                    <textarea class="conf-impact" style="min-height: 60px;">${data.impact || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getEscalationTriggerTemplate(index, data = {}) {
+            return `
+                <div class="rule-card" data-index="${index}">
+                    <label class="field-label">Condition</label>
+                    <input type="text" class="esc-condition" value="${data.condition || ''}" placeholder="e.g., Confidence < 0.70" style="margin-bottom: 12px;">
+                    <label class="field-label">Escalation Action</label>
+                    <textarea class="esc-action" style="min-height: 60px;">${data.action || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getStopConditionTemplate(index, data = {}) {
+            return `
+                <div class="rule-card" data-index="${index}">
+                    <label class="field-label">Condition</label>
+                    <input type="text" class="stop-condition" value="${data.condition || ''}" placeholder="e.g., FP rate > 5% over 1 hour" style="margin-bottom: 12px;">
+                    <label class="field-label">Stop Action</label>
+                    <textarea class="stop-action" style="min-height: 60px;">${data.action || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function addConfidenceThreshold() {
+            const container = document.getElementById('confidence-thresholds-container');
+            container.insertAdjacentHTML('beforeend', getConfidenceThresholdTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function addEscalationTrigger() {
+            const container = document.getElementById('escalation-triggers-container');
+            container.insertAdjacentHTML('beforeend', getEscalationTriggerTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function addStopCondition() {
+            const container = document.getElementById('stop-conditions-container');
+            container.insertAdjacentHTML('beforeend', getStopConditionTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function removeItem(button) {
+            if (confirm('Remove this item?')) {
+                button.parentElement.remove();
+                autoSave();
+            }
+        }
+        
+        function collectCanvasData() {
+            const data = {
+                identity: {
+                    name: document.getElementById('context-name').value,
+                    purpose: document.getElementById('context-purpose').value,
+                    domainLanguage: document.getElementById('domain-language').value
+                },
+                aiResponsibilities: {
+                    owns: document.getElementById('ai-owns').value,
+                    notOwns: document.getElementById('ai-not-owns').value,
+                    modelType: document.getElementById('model-type').value
+                },
+                degradation: {
+                    confidenceThresholds: [],
+                    escalationTriggers: [],
+                    stopConditions: []
+                },
+                communication: {
+                    inbound: document.getElementById('inbound').value,
+                    outbound: document.getElementById('outbound').value
+                },
+                strategic: {
+                    domainType: document.getElementById('domain-type').value,
+                    evolutionStrategy: document.getElementById('evolution-strategy').value,
+                    businessCriticality: document.getElementById('business-criticality').value
+                },
+                dependencies: {
+                    upstream: document.getElementById('upstream').value,
+                    downstream: document.getElementById('downstream').value
+                },
+                fallback: {
+                    primary: document.getElementById('primary-fallback').value,
+                    recovery: document.getElementById('recovery-strategy').value
+                },
+                evolution: {
+                    retrainingTriggers: document.getElementById('retraining-triggers').value,
+                    versioningStrategy: document.getElementById('versioning-strategy').value,
+                    backwardCompatibility: document.getElementById('backward-compatibility').value
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            document.querySelectorAll('#confidence-thresholds-container .rule-card').forEach(item => {
+                data.degradation.confidenceThresholds.push({
+                    range: item.querySelector('.conf-range').value,
+                    action: item.querySelector('.conf-action').value,
+                    impact: item.querySelector('.conf-impact').value
+                });
+            });
+            
+            document.querySelectorAll('#escalation-triggers-container .rule-card').forEach(item => {
+                data.degradation.escalationTriggers.push({
+                    condition: item.querySelector('.esc-condition').value,
+                    action: item.querySelector('.esc-action').value
+                });
+            });
+            
+            document.querySelectorAll('#stop-conditions-container .rule-card').forEach(item => {
+                data.degradation.stopConditions.push({
+                    condition: item.querySelector('.stop-condition').value,
+                    action: item.querySelector('.stop-action').value
+                });
+            });
+            
+            return data;
+        }
+        
+        function autoSave() {
+            const data = collectCanvasData();
+            localStorage.setItem('ai_bounded_context_canvas', JSON.stringify(data));
+        }
+        
+        function saveCanvas() {
+            const data = collectCanvasData();
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            const contextName = document.getElementById('context-name').value.replace(/\s+/g, '_') || 'context';
+            link.download = `ai_bounded_context_${contextName}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+        
+        function loadCanvas() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        loadCanvasData(data);
+                    } catch (error) {
+                        alert('Error loading file');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+        
+        function loadCanvasData(data) {
+            document.getElementById('context-name').value = data.identity?.name || '';
+            document.getElementById('context-purpose').value = data.identity?.purpose || '';
+            document.getElementById('domain-language').value = data.identity?.domainLanguage || '';
+            document.getElementById('ai-owns').value = data.aiResponsibilities?.owns || '';
+            document.getElementById('ai-not-owns').value = data.aiResponsibilities?.notOwns || '';
+            document.getElementById('model-type').value = data.aiResponsibilities?.modelType || '';
+            
+            document.getElementById('confidence-thresholds-container').innerHTML = '';
+            data.degradation?.confidenceThresholds?.forEach((threshold, index) => {
+                document.getElementById('confidence-thresholds-container').insertAdjacentHTML('beforeend', 
+                    getConfidenceThresholdTemplate(index, threshold));
+            });
+            
+            document.getElementById('escalation-triggers-container').innerHTML = '';
+            data.degradation?.escalationTriggers?.forEach((trigger, index) => {
+                document.getElementById('escalation-triggers-container').insertAdjacentHTML('beforeend', 
+                    getEscalationTriggerTemplate(index, trigger));
+            });
+            
+            document.getElementById('stop-conditions-container').innerHTML = '';
+            data.degradation?.stopConditions?.forEach((condition, index) => {
+                document.getElementById('stop-conditions-container').insertAdjacentHTML('beforeend', 
+                    getStopConditionTemplate(index, condition));
+            });
+            
+            document.getElementById('inbound').value = data.communication?.inbound || '';
+            document.getElementById('outbound').value = data.communication?.outbound || '';
+            document.getElementById('domain-type').value = data.strategic?.domainType || '';
+            document.getElementById('evolution-strategy').value = data.strategic?.evolutionStrategy || '';
+            document.getElementById('business-criticality').value = data.strategic?.businessCriticality || '';
+            document.getElementById('upstream').value = data.dependencies?.upstream || '';
+            document.getElementById('downstream').value = data.dependencies?.downstream || '';
+            document.getElementById('primary-fallback').value = data.fallback?.primary || '';
+            document.getElementById('recovery-strategy').value = data.fallback?.recovery || '';
+            document.getElementById('retraining-triggers').value = data.evolution?.retrainingTriggers || '';
+            document.getElementById('versioning-strategy').value = data.evolution?.versioningStrategy || '';
+            document.getElementById('backward-compatibility').value = data.evolution?.backwardCompatibility || '';
+        }
+        
+        function clearCanvas() {
+            if (confirm('Clear all fields?')) {
+                document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+                document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+                document.getElementById('confidence-thresholds-container').innerHTML = '';
+                document.getElementById('escalation-triggers-container').innerHTML = '';
+                document.getElementById('stop-conditions-container').innerHTML = '';
+                localStorage.removeItem('ai_bounded_context_canvas');
+            }
+        }
+        
+        function exportCanvas() {
+            saveCanvas();
+        }
+        
+        document.addEventListener('input', autoSave);
+        document.addEventListener('change', autoSave);
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('ai_bounded_context_canvas');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    loadCanvasData(data);
+                } catch (error) {
+                    console.error('Error loading saved data');
+                }
+            } else {
+                addConfidenceThreshold();
+                addEscalationTrigger();
+                addStopCondition();
+            }
+        });
+    </script>
 </body>
 </html>

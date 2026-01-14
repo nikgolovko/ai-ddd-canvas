@@ -1,275 +1,589 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ubiquitous Language Alignment Canvas</title>
-  <style>
-    :root{
-      --page-bg:#ffffff;
-      --panel-bg:#ffffff;
-      --border:#1f1f1f;
-      --border-thin:#2b2b2b;
-      --header-bg:#e6e6e6;
-      --note-bg:#fff2a8;
-      --note-border:#d3c26a;
-      --text:#111111;
-      --muted:#555555;
-      --radius:0px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubiquitous Language Alignment Canvas</title>
+    <style>
 
-    html,body{
-      height:100%;
-      margin:0;
-      background:var(--page-bg);
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
+/* =========================================================
+   Worksheet-style Canvas (like provided reference image)
+   Light, print-friendly, sticky-tag headers
+   ========================================================= */
 
-    .page{
-      max-width:1200px;
-      margin:0 auto;
-      padding:18px 16px 40px;
-    }
+:root{
+  --ink:#1b1b1b;
+  --muted:#5a5a5a;
+  --paper:#ffffff;
+  --page:#f3f3f3;
+  --header:#e9e9e9;
+  --tag:#fff2a6;           /* sticky-note yellow */
+  --tag-border:#cdbb58;
+  --field:#ffffff;
+  --field-border:#2a2a2a;
+  --soft:#f6f6f6;
+  --danger:#b91c1c;
+  --radius:8px;
+}
 
-    header{
-      display:flex;
-      gap:14px;
-      align-items:flex-end;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      padding-bottom:10px;
-      border-bottom:3px solid var(--border);
-      margin-bottom:14px;
-    }
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--page) !important;
+  color: var(--ink) !important;
+  padding: 18px;
+}
 
-    h1{
-      margin:0;
-      font-size:22px;
-      font-weight:900;
-      letter-spacing:.2px;
-    }
+/* container */
+.container{
+  max-width: 1600px;
+  margin: 0 auto;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.10);
+  overflow: hidden;
+}
 
-    .meta{
-      color:var(--muted);
-      font-size:12px;
-      margin-top:4px;
-    }
+/* top header (title + description) */
+.header{
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  padding: 18px 22px 14px 22px !important;
+  border-bottom: 2px solid var(--ink);
+}
+.header h1{
+  margin:0 0 6px 0;
+  font-size: 26px !important;
+  line-height: 1.15;
+}
+.header-subtitle{
+  margin:0 0 6px 0 !important;
+  font-size: 14px !important;
+  color: var(--muted) !important;
+}
+.header-description{
+  margin:0 !important;
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  max-width: 1100px;
+}
 
-    .toolbar{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
+/* control bar */
+.controls{
+  padding: 10px 14px !important;
+  background: var(--soft) !important;
+  border-bottom: 2px solid var(--ink) !important;
+  display:flex !important;
+  gap: 10px !important;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.btn{
+  padding: 7px 10px !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  cursor: pointer;
+  font-weight: 650 !important;
+  font-size: 12px !important;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.btn:hover{ box-shadow: 0 2px 0 rgba(0,0,0,0.08); transform: translateY(-1px); }
+.btn:active{ transform: translateY(0px); }
+.btn-primary{
+  background: var(--ink) !important;
+  color: #fff !important;
+}
+.btn-primary:hover{ box-shadow: 0 3px 0 rgba(0,0,0,0.18); }
+.btn-secondary{ background:#fff !important; }
+.btn-success{ background:#fff !important; }
 
-    button{
-      border:2px solid var(--border);
-      background:var(--page-bg);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:0;
-      cursor:pointer;
-      font-weight:800;
-      font-size:12px;
-      box-shadow:none;
-    }
-    button:hover{ background:#f6f6f6; }
+/* content padding */
+.canvas-content{ padding: 16px !important; }
 
-    .card{
-      margin-top:16px;
-      background:var(--panel-bg);
-      border:2px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:none;
-      overflow:hidden;
-    }
+/* sections */
+.section{
+  border: 2px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 14px !important;
+  margin: 0 0 14px 0 !important;
+  background: var(--paper) !important;
+  box-shadow: none !important;
+}
+.section-header{
+  margin: -14px -14px 12px -14px !important;
+  padding: 8px 10px !important;
+  background: var(--header) !important;
+  border-bottom: 2px solid var(--ink) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+}
+.section-header .left{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding: 3px 8px;
+  background: var(--tag);
+  border: 1.6px solid var(--tag-border);
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: lowercase;
+}
 
-    .hd{
-      padding:12px 14px;
-      border-bottom:2px solid var(--border);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background:var(--header-bg);
-    }
+/* fields */
+.field-label{
+  font-weight: 750 !important;
+  font-size: 12px !important;
+  color: var(--ink) !important;
+  margin: 0 0 6px 0 !important;
+  display:block !important;
+}
+textarea, input[type="text"], select{
+  width: 100% !important;
+  border: 1.8px solid var(--field-border) !important;
+  border-radius: 8px !important;
+  padding: 8px 9px !important;
+  font-size: 12px !important;
+  font-family: inherit !important;
+  background: var(--field) !important;
+  color: var(--ink) !important;
+  outline: none;
+  box-shadow: none !important;
+}
+textarea{ min-height: 84px !important; resize: vertical !important; }
+textarea:focus, input[type="text"]:focus, select:focus{
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.10) !important;
+}
 
-    .hd .t{
-      font-weight:900;
-      font-size:14px;
-      color:var(--text);
-      text-transform:uppercase;
-      letter-spacing:.3px;
-    }
+/* cards / grids */
+.term-grid{
+  display:grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+}
+.term-card, .item-card{
+  background: #fff !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 12px !important;
+  box-shadow:none !important;
+}
+.term-card:hover, .item-card:hover{ box-shadow:none !important; border-color: var(--ink) !important; }
 
-    .bd{
-      padding:12px 14px;
-      background:#ffffff;
-    }
+.add-btn{
+  background: #fff !important;
+  color: var(--ink) !important;
+  border: 1.8px solid var(--ink) !important;
+  border-radius: 10px !important;
+  padding: 8px 10px !important;
+  cursor:pointer;
+  font-weight: 750 !important;
+  font-size: 12px !important;
+}
+.add-btn:hover{ box-shadow: 0 2px 0 rgba(0,0,0,0.10); transform: translateY(-1px); }
+.remove-btn{
+  background: #fff !important;
+  color: var(--danger) !important;
+  border: 1.8px solid var(--danger) !important;
+  border-radius: 9px !important;
+  padding: 6px 9px !important;
+  cursor:pointer;
+  font-weight: 800 !important;
+  font-size: 11px !important;
+}
 
-    .hint{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:8px;
-      line-height:1.35;
-    }
+/* examples */
+.example-box{
+  background: #fffdf0 !important;
+  border: 1.8px dashed var(--ink) !important;
+  border-left: 6px solid var(--tag-border) !important;
+  padding: 10px 10px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+  color: var(--ink) !important;
+}
 
-    input, textarea, select{
-      width:100%;
-      box-sizing:border-box;
-      border:2px solid var(--border-thin);
-      background:#ffffff;
-      color:var(--text);
-      border-radius:0;
-      padding:10px 10px;
-      font-size:13px;
-      outline:none;
-    }
+/* footer */
+.footer{
+  padding: 12px 16px !important;
+  background: var(--soft) !important;
+  border-top: 2px solid var(--ink) !important;
+  text-align: center !important;
+  color: var(--muted) !important;
+  font-size: 11px !important;
+}
 
-    textarea{
-      min-height:84px;
-      resize:vertical;
-      line-height:1.35;
-    }
+/* helpers */
+.grid-2{ display:grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+p{ line-height: 1.35; }
 
-    /* Sticky-note label */
-    .tag{
-      font-size:12px;
-      font-weight:900;
-      color:#222;
-      border:2px solid var(--note-border);
-      padding:6px 10px;
-      border-radius:0;
-      background:var(--note-bg);
-      white-space:nowrap;
-      text-transform:lowercase;
-    }
+/* Print */
+@media print{
+  body{ background:#fff !important; padding: 0 !important; }
+  .controls{ display:none !important; }
+  .container{ box-shadow:none !important; border-radius: 0 !important; }
+  .section{ page-break-inside: avoid; }
+}
 
-    /* Tables */
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      border:2px solid var(--border);
-      border-radius:0;
-      overflow:hidden;
-    }
-    th,td{
-      border-right:2px solid var(--border);
-      border-bottom:2px solid var(--border);
-      padding:10px;
-      vertical-align:top;
-    }
-    th:last-child, td:last-child{ border-right:0; }
-    tr:last-child td{ border-bottom:0; }
-
-    th{
-      font-size:12px;
-      text-align:left;
-      color:var(--text);
-      background:var(--header-bg);
-      text-transform:uppercase;
-      letter-spacing:.3px;
-      font-weight:900;
-    }
-    td{ background:#ffffff; }
-
-    @media (max-width:980px){
-      table,thead,tbody,tr,th,td{display:block}
-      tr{margin-bottom:12px}
-      th{position:sticky; top:0}
-    }
-
-    @media print{
-      header .toolbar{ display:none; }
-      .page{ padding:0; }
-      button{ display:none; }
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div class="page">
-    <header>
-      <div>
-        <h1>Ubiquitous Language Alignment Canvas</h1>
-        <div class="meta">Create a shared glossary across Domain, ML, and OT/IT — with semantics and stability.</div>
-      </div>
-      <div class="toolbar">
-        <button onclick="window.print()">Print / Save PDF</button>
-        <button onclick="clearAll()">Clear</button>
-        <button onclick="addRow()">Add Term Row</button>
-      </div>
-    </header>
-
-    <section class="card">
-      <div class="hd"><div class="t">Context + Scope</div></div>
-      <div class="bd">
-        <div class="hint">Which bounded context does this glossary belong to?</div>
-        <input id="ctx" placeholder="e.g., Surface Quality Inspection" />
-        <div class="hint">What problem does this glossary prevent? (misunderstandings, wrong units, label confusion, etc.)</div>
-        <textarea id="why" placeholder="Describe the collaboration pain you’re addressing."></textarea>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="hd"><div class="t">Key Terms (Tri-lingual)</div></div>
-      <div class="bd">
-        <div class="hint">
-          For each term, capture: <b>Domain meaning</b> (expert language), <b>ML interpretation</b> (labels/features/proxies),
-          and <b>Technical representation</b> (signals/fields/units). Add risks and stability.
+    <div class="container">
+        <div class="header">
+            <h1>🗣️ Ubiquitous Language Alignment Canvas</h1>
+            <p class="header-subtitle">Align meaning across Domain, ML, and OT/IT teams</p>
+            <p class="header-description">
+                Creates shared definitions for key terms within the bounded context. Exposes semantic mismatches early 
+                and prevents silent drift in concepts like confidence, defect type, and position. Based on DDD Ubiquitous 
+                Language extended to handle AI-specific semantic challenges.
+            </p>
         </div>
-
-        <table id="tbl">
-          <thead>
-            <tr>
-              <th class="term">Term</th>
-              <th class="col">Domain meaning</th>
-              <th class="col">ML interpretation / proxy</th>
-              <th class="col">Technical representation (fields, units)</th>
-              <th class="risk">Ambiguities / risks</th>
-              <th class="stable">Stability</th>
-            </tr>
-          </thead>
-          <tbody id="body"></tbody>
-        </table>
-
-        <div class="addRow hint">
-          Tip: Use Stability values like <b>Stable</b>, <b>Evolving</b>, <b>Volatile</b>. Volatile terms deserve contracts + tests.
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="saveCanvas()">💾 Save Canvas</button>
+            <button class="btn btn-secondary" onclick="loadCanvas()">📂 Load Canvas</button>
+            <button class="btn btn-secondary" onclick="clearCanvas()">🗑️ Clear All</button>
+            <button class="btn btn-success" onclick="exportCanvas()">📥 Export JSON</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Print</button>
         </div>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    const body = document.getElementById("body");
-
-    function rowTemplate() {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input placeholder="e.g., defect severity"></td>
-        <td><textarea placeholder="What it means to domain experts"></textarea></td>
-        <td><textarea placeholder="Label definition, proxy, or feature mapping"></textarea></td>
-        <td><textarea placeholder="Signals/fields, units, reference frame, time meaning"></textarea></td>
-        <td><textarea placeholder="Confusions, edge cases, semantic drift risks"></textarea></td>
-        <td>
-          <input placeholder="Stable / Evolving / Volatile">
-          <div style="height:8px"></div>
-          <button onclick="this.closest('tr').remove()" style="width:100%;border-radius:12px;padding:8px 10px;font-weight:800;border:2px solid var(--border);background:#ffffff;color:var(--text);cursor:pointer">Remove</button>
-        </td>
-      `;
-      return tr;
-    }
-
-    function addRow() { body.appendChild(rowTemplate()); }
-    function clearAll() {
-      document.getElementById("ctx").value = "";
-      document.getElementById("why").value = "";
-      body.innerHTML = "";
-      for (let i=0;i<6;i++) addRow();
-    }
-
-    // init with 6 rows
-    for (let i=0;i<6;i++) addRow();
-  </script>
+        
+        <div class="canvas-content">
+            <!-- Context Scope -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📍</span>
+                    Bounded Context Scope</div><span class="tag">scope</span></div>
+                <div>
+                    <label class="field-label">Context Name:</label>
+                    <input type="text" id="context-name" placeholder="Name of the bounded context">
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Language Scope:</label>
+                    <textarea id="language-scope" placeholder="What domain does this vocabulary cover? What's explicitly in/out of scope?"></textarea>
+                </div>
+            </div>
+            
+            <!-- Canonical Terms -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">📖</span>
+                    Canonical Terms & Definitions</div><span class="tag">canonical</span></div>
+                <p style="color: #6c757d; margin-bottom: 20px;">
+                    Core terms with precise, agreed-upon meaning within this bounded context. These are THE definitions - 
+                    all stakeholders (domain experts, ML engineers, IT/OT) use these exact meanings.
+                </p>
+                <div id="canonical-terms-container" class="term-grid"></div>
+                <button class="add-btn" onclick="addCanonicalTerm()">+ Add Canonical Term</button>
+                
+                <div class="example-box">
+                    <strong>Example Canonical Term:</strong><br>
+                    <strong>Term:</strong> "Defect"<br>
+                    <strong>Definition:</strong> A surface anomaly that deviates from specification by >0.1mm depth OR affects >2% of surface area, 
+                    detectable via visual inspection. Includes: scratches, dents, discoloration. Excludes: normal wear, design features.<br>
+                    <strong>Domain Usage:</strong> Quality inspectors use visual comparison against reference samples<br>
+                    <strong>ML Interpretation:</strong> Anomaly in texture/geometry features with confidence >0.8<br>
+                    <strong>System Representation:</strong> defect_flag (boolean), defect_type (enum), confidence (float 0-1)
+                </div>
+            </div>
+            
+            <!-- Semantic Mismatches -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">⚠️</span>
+                    Semantic Mismatches & Resolutions</div><span class="tag">clarity</span></div>
+                <p style="color: #6c757d; margin-bottom: 20px;">
+                    Terms that mean different things to different groups. Document the mismatch and how it's resolved.
+                </p>
+                <div id="mismatches-container"></div>
+                <button class="add-btn" onclick="addMismatch()">+ Add Semantic Mismatch</button>
+                
+                <div class="example-box">
+                    <strong>Example Mismatch:</strong><br>
+                    <strong>Term:</strong> "Precision"<br>
+                    <strong>Domain Meaning:</strong> Manufacturing tolerance (±0.01mm)<br>
+                    <strong>ML Meaning:</strong> True positives / (True positives + False positives)<br>
+                    <strong>Resolution:</strong> Use "dimensional_precision" and "detection_precision" to disambiguate<br>
+                    <strong>Severity:</strong> High - caused production errors in initial deployment
+                </div>
+            </div>
+            
+            <!-- ML-Specific Concepts -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🤖</span>
+                    ML-Specific Concepts (Domain Translation)</div><span class="tag">translation</span></div>
+                <p style="color: #6c757d; margin-bottom: 20px;">
+                    ML/AI concepts that need clear business meaning. Make probabilistic/statistical concepts concrete.
+                </p>
+                <div id="ml-concepts-container" class="term-grid"></div>
+                <button class="add-btn" onclick="addMLConcept()">+ Add ML Concept</button>
+                
+                <div class="example-box">
+                    <strong>Example:</strong><br>
+                    <strong>ML Concept:</strong> "Model Confidence"<br>
+                    <strong>Business Translation:</strong> How certain the AI is about its classification (0-100%)<br>
+                    <strong>Decision Rule:</strong> >90% = automate, 70-90% = flag for review, <70% = require human decision<br>
+                    <strong>Business Impact:</strong> Determines automation level and throughput
+                </div>
+            </div>
+            
+            <!-- Concept Drift Tracking -->
+            <div class="section">
+                <div class="section-header"><div class="left"><span style="font-size: 1.3em;">🔄</span>
+                    Concept Drift Tracking</div><span class="tag">drift</span></div>
+                <p style="color: #6c757d; margin-bottom: 20px;">
+                    How do definitions evolve? What changes trigger vocabulary updates?
+                </p>
+                <div>
+                    <label class="field-label">Known Drift Scenarios:</label>
+                    <textarea id="drift-scenarios" placeholder="When might term meanings change? (e.g., new defect types, updated quality standards, model retraining)"></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Vocabulary Update Process:</label>
+                    <textarea id="update-process" placeholder="How are vocabulary changes proposed, reviewed, and propagated across teams?"></textarea>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label class="field-label">Version Control:</label>
+                    <textarea id="version-control" placeholder="How is vocabulary versioned? How do we track changes over time?"></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Ubiquitous Language Alignment Canvas</strong> | DDD Strategic Design for AI Systems</p>
+            <p>Prevents semantic drift and ensures shared understanding across technical domains</p>
+        </div>
+    </div>
+    
+    <script>
+        function getCanonicalTermTemplate(index, data = {}) {
+            return `
+                <div class="term-card" data-index="${index}">
+                    <label class="field-label">Term:</label>
+                    <input type="text" class="term-name" value="${data.term || ''}" placeholder="Canonical term">
+                    <label class="field-label" style="margin-top: 12px;">Definition:</label>
+                    <textarea class="term-definition">${data.definition || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">Domain Usage:</label>
+                    <textarea class="term-domain-usage" style="min-height: 50px;">${data.domainUsage || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">ML Interpretation:</label>
+                    <textarea class="term-ml-interp" style="min-height: 50px;">${data.mlInterpretation || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">System Representation:</label>
+                    <input type="text" class="term-system-rep" value="${data.systemRep || ''}" placeholder="Data types, formats">
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getMismatchTemplate(index, data = {}) {
+            const severity = data.severity || 'medium';
+            return `
+                <div class="term-card" data-index="${index}">
+                    <label class="field-label">Term:</label>
+                    <input type="text" class="mismatch-term" value="${data.term || ''}" placeholder="Ambiguous term">
+                    <label class="field-label" style="margin-top: 12px;">Domain Meaning:</label>
+                    <textarea class="mismatch-domain" style="min-height: 50px;">${data.domainMeaning || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">ML/Technical Meaning:</label>
+                    <textarea class="mismatch-ml" style="min-height: 50px;">${data.mlMeaning || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">Resolution:</label>
+                    <textarea class="mismatch-resolution" style="min-height: 50px;">${data.resolution || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">Severity:</label>
+                    <select class="mismatch-severity-select" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px;">
+                        <option value="low" ${severity === 'low' ? 'selected' : ''}>Low - Minor confusion</option>
+                        <option value="medium" ${severity === 'medium' ? 'selected' : ''}>Medium - Potential errors</option>
+                        <option value="high" ${severity === 'high' ? 'selected' : ''}>High - Production impact</option>
+                    </select>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function getMLConceptTemplate(index, data = {}) {
+            return `
+                <div class="term-card" data-index="${index}">
+                    <label class="field-label">ML Concept:</label>
+                    <input type="text" class="ml-concept-name" value="${data.concept || ''}" placeholder="e.g., Confidence, Recall">
+                    <label class="field-label" style="margin-top: 12px;">Business Translation:</label>
+                    <textarea class="ml-business-translation">${data.translation || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">Decision Rule:</label>
+                    <textarea class="ml-decision-rule" style="min-height: 50px;">${data.decisionRule || ''}</textarea>
+                    <label class="field-label" style="margin-top: 12px;">Business Impact:</label>
+                    <textarea class="ml-business-impact" style="min-height: 50px;">${data.impact || ''}</textarea>
+                    <button class="remove-btn" onclick="removeItem(this)">Remove</button>
+                </div>
+            `;
+        }
+        
+        function addCanonicalTerm() {
+            const container = document.getElementById('canonical-terms-container');
+            container.insertAdjacentHTML('beforeend', getCanonicalTermTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function addMismatch() {
+            const container = document.getElementById('mismatches-container');
+            container.insertAdjacentHTML('beforeend', getMismatchTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function addMLConcept() {
+            const container = document.getElementById('ml-concepts-container');
+            container.insertAdjacentHTML('beforeend', getMLConceptTemplate(container.children.length));
+            autoSave();
+        }
+        
+        function removeItem(button) {
+            if (confirm('Remove this item?')) {
+                button.closest('.term-card').remove();
+                autoSave();
+            }
+        }
+        
+        function collectCanvasData() {
+            const data = {
+                context: {
+                    name: document.getElementById('context-name').value,
+                    scope: document.getElementById('language-scope').value
+                },
+                canonicalTerms: [],
+                semanticMismatches: [],
+                mlConcepts: [],
+                conceptDrift: {
+                    scenarios: document.getElementById('drift-scenarios').value,
+                    updateProcess: document.getElementById('update-process').value,
+                    versionControl: document.getElementById('version-control').value
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            document.querySelectorAll('#canonical-terms-container .term-card').forEach(card => {
+                data.canonicalTerms.push({
+                    term: card.querySelector('.term-name').value,
+                    definition: card.querySelector('.term-definition').value,
+                    domainUsage: card.querySelector('.term-domain-usage').value,
+                    mlInterpretation: card.querySelector('.term-ml-interp').value,
+                    systemRep: card.querySelector('.term-system-rep').value
+                });
+            });
+            
+            document.querySelectorAll('#mismatches-container .term-card').forEach(card => {
+                data.semanticMismatches.push({
+                    term: card.querySelector('.mismatch-term').value,
+                    domainMeaning: card.querySelector('.mismatch-domain').value,
+                    mlMeaning: card.querySelector('.mismatch-ml').value,
+                    resolution: card.querySelector('.mismatch-resolution').value,
+                    severity: card.querySelector('.mismatch-severity-select').value
+                });
+            });
+            
+            document.querySelectorAll('#ml-concepts-container .term-card').forEach(card => {
+                data.mlConcepts.push({
+                    concept: card.querySelector('.ml-concept-name').value,
+                    translation: card.querySelector('.ml-business-translation').value,
+                    decisionRule: card.querySelector('.ml-decision-rule').value,
+                    impact: card.querySelector('.ml-business-impact').value
+                });
+            });
+            
+            return data;
+        }
+        
+        function autoSave() {
+            localStorage.setItem('ubiquitous_language_canvas', JSON.stringify(collectCanvasData()));
+        }
+        
+        function saveCanvas() {
+            const data = collectCanvasData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            const contextName = document.getElementById('context-name').value.replace(/\s+/g, '_') || 'context';
+            link.download = `ubiquitous_language_${contextName}_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            alert('Canvas saved!');
+        }
+        
+        function loadCanvas() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = e => {
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        loadCanvasData(JSON.parse(event.target.result));
+                        alert('Canvas loaded!');
+                    } catch (error) {
+                        alert('Error loading file');
+                    }
+                };
+                reader.readAsText(e.target.files[0]);
+            };
+            input.click();
+        }
+        
+        function loadCanvasData(data) {
+            document.getElementById('context-name').value = data.context?.name || '';
+            document.getElementById('language-scope').value = data.context?.scope || '';
+            document.getElementById('drift-scenarios').value = data.conceptDrift?.scenarios || '';
+            document.getElementById('update-process').value = data.conceptDrift?.updateProcess || '';
+            document.getElementById('version-control').value = data.conceptDrift?.versionControl || '';
+            
+            document.getElementById('canonical-terms-container').innerHTML = '';
+            data.canonicalTerms?.forEach((term, i) => {
+                document.getElementById('canonical-terms-container').insertAdjacentHTML('beforeend', getCanonicalTermTemplate(i, term));
+            });
+            
+            document.getElementById('mismatches-container').innerHTML = '';
+            data.semanticMismatches?.forEach((mismatch, i) => {
+                document.getElementById('mismatches-container').insertAdjacentHTML('beforeend', getMismatchTemplate(i, mismatch));
+            });
+            
+            document.getElementById('ml-concepts-container').innerHTML = '';
+            data.mlConcepts?.forEach((concept, i) => {
+                document.getElementById('ml-concepts-container').insertAdjacentHTML('beforeend', getMLConceptTemplate(i, concept));
+            });
+        }
+        
+        function clearCanvas() {
+            if (confirm('Clear all?')) {
+                document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+                document.querySelectorAll('.term-grid').forEach(el => el.innerHTML = '');
+                document.getElementById('mismatches-container').innerHTML = '';
+                localStorage.removeItem('ubiquitous_language_canvas');
+            }
+        }
+        
+        function exportCanvas() { saveCanvas(); }
+        
+        document.addEventListener('input', autoSave);
+        document.addEventListener('change', autoSave);
+        
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('ubiquitous_language_canvas');
+            if (saved) {
+                try {
+                    loadCanvasData(JSON.parse(saved));
+                } catch (error) {
+                    console.error('Load error');
+                }
+            } else {
+                addCanonicalTerm();
+                addMismatch();
+                addMLConcept();
+            }
+        });
+    </script>
 </body>
 </html>
